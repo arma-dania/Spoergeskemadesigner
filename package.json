@@ -1,0 +1,16 @@
+{
+  "name": "spoergeskemadesigner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spørgeskemadesigner til undervisning i markedsanalyse – bygges til én selvstændig index.html",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-html.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tailwindcss": "3.4.17"
+  }
+}
