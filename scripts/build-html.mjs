@@ -2,7 +2,7 @@
 // (React, app-kode og Tailwind-CSS lægges inline - kun Google Fonts hentes udefra).
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -59,6 +59,9 @@ try {
 </html>
 `;
   writeFileSync(join(root, 'index.html'), html);
+  // Netlify udgiver kun mappen dist/ (se netlify.toml)
+  mkdirSync(join(root, 'dist'), { recursive: true });
+  writeFileSync(join(root, 'dist', 'index.html'), html);
   console.log(`index.html skrevet (${(html.length / 1024).toFixed(0)} KB)`);
 } finally {
   rmSync(tmp, { recursive: true, force: true });

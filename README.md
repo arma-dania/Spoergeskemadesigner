@@ -10,11 +10,31 @@ Værktøjet dækker **udarbejdelsen af spørgeskemaet**. Databehandlingen i spri
 
 | Sådan vil du bruge det | Gør dette |
 |---|---|
-| **Hurtigt, i en browser** | Åbn `index.html`. Filen er selvstændig, så du kan dobbeltklikke på den, lægge den på Moodle/itslearning eller hoste den på GitHub Pages. |
-| **Med AI-feedback** | Indsæt `spoergeskemadesigner.jsx` som et Claude-artifact (React). AI-kaldene virker kun i det miljø, se [Begrænsninger](#begrænsninger). |
+| **Med AI-feedback (anbefalet)** | Udgiv på **Netlify** — se [AI-feedback via Netlify](#ai-feedback-via-netlify). |
+| **Hurtigt, uden AI** | Åbn `index.html`. Filen er selvstændig, så du kan dobbeltklikke på den eller lægge den på Moodle/itslearning. Alt undtagen AI-feedbacken virker. |
+| **Som Claude-artifact** | Indsæt `spoergeskemadesigner.jsx` som et Claude-artifact (React). AI-feedbacken bruger så artifactets egen adgang til Claude. |
 | **Videreudvikle** | Redigér `spoergeskemadesigner.jsx`, og kør `npm install && npm run build` for at generere en ny `index.html`. |
 
 `index.html` kræver ingen internetforbindelse ud over Google Fonts. Uden net bruges standardskrifttyper.
+
+---
+
+## AI-feedback via Netlify
+
+AI-feedbacken kører gennem en lille serverfunktion, `netlify/functions/claude.mjs`, som Netlify udgiver på `/api/claude`. Browseren sender kun prompten dertil; funktionen kalder Claude API'et med nøglen, som ligger hos Netlify og aldrig når frem til de studerende.
+
+1. **Forbind repoet:** I Netlify-projektet: *Project configuration → Build & deploy → Link repository* → `arma-dania/Spoergeskemadesigner`, og vælg den gren, der skal udgives. Byggeindstillingerne læses fra `netlify.toml` (`npm run build`, udgiv `dist/`).
+2. **Sæt API-nøglen:** *Project configuration → Environment variables → Add a variable* → `ANTHROPIC_API_KEY` = din nøgle fra [console.anthropic.com](https://console.anthropic.com). Markér den som hemmelig.
+3. **Deploy:** *Deploys → Trigger deploy*. Åbn siden, indlæs SonicWave-eksemplet, og tryk *Få AI-feedback* for at tjekke.
+
+Valgfrie miljøvariabler:
+
+| Variabel | Standard | Betydning |
+|---|---|---|
+| `AI_MODEL` | `claude-opus-5-5` | Modellen. `claude-sonnet-5-5` er billigere og hurtigere. |
+| `AI_EFFORT` | `low` | Hvor grundigt modellen tænker: `low`, `medium` eller `high`. Feedbacken er kort, så `low` er normalt nok og holder svartiden nede. |
+
+**Sikkerhed og pris:** Funktionen accepterer kun sidens egne feedback-prompts (de starter alle med samme tekst), og prompten må højst være 30.000 tegn. Den kan altså ikke bruges som åben chatbot. Den har dog ingen login. Sæt derfor en månedlig udgiftsgrænse i Anthropic Console (*Settings → Limits*), før siden deles med holdet.
 
 ---
 
@@ -65,7 +85,9 @@ spoergeskemadesigner.jsx   Kildekoden: én React-komponent (pædagogiske data, r
 index.html                 Selvstændig, bygget version: åbnes direkte i en browser
 scripts/build-html.mjs     Bygger index.html (esbuild + Tailwind, alt lægges inline)
 scripts/entry.jsx          Monterer App-komponenten i siden
-package.json               Byggeafhængigheder (esbuild, React 18, Tailwind 3)
+package.json               Afhængigheder (esbuild, React 18, Tailwind 3, @anthropic-ai/sdk til serverfunktionen)
+netlify.toml               Netlify: byggekommando, udgivelsesmappe (dist/) og funktioner
+netlify/functions/claude.mjs  Serverfunktion, der kalder Claude API'et med nøglen fra Netlify
 FORSLAG.md                 Gennemgang, fejl, forbedringsforslag, animationer, guides og øvelser
 KONGRUENS.md               Sammenhængen med statistiksiden og SonicWave-casen
 ```
@@ -86,7 +108,7 @@ Redigér `index.html` ikke direkte. Den overskrives, når du kører `npm run bui
 
 ## Begrænsninger
 
-- **AI-feedback virker kun som Claude-artifact.** Koden kalder `https://api.anthropic.com/v1/messages` uden API-nøgle, og det virker kun inde i claude.ai. I `index.html` vises *"AI-feedback ikke tilgængelig: Failed to fetch"*, og de regelbaserede advarsler i trin 4 fungerer stadig. Alle andre trin kan gennemføres uden AI.
+- **AI-feedback kræver Netlify (eller Claude-artifact).** Åbnes `index.html` direkte fra disken, vises *"AI-feedback kræver, at siden åbnes fra Netlify-adressen"*. De regelbaserede advarsler i trin 4 og alle andre trin virker stadig.
 - **Gemmes kun i browseren.** Arbejdet gemmes automatisk (`localStorage`) og overlever genindlæsning, men ikke et skift af computer eller browser, og ikke et privat vindue. Bed de studerende om at eksportere, når de er færdige.
 
 ---
@@ -102,3 +124,4 @@ Den byggede `index.html` er gennemtestet i Chromium (Playwright). Testen dækked
 - AI-feedback med simulerede svar og uden netværk (fejlbesked vises korrekt)
 - *Anvend foreslået rækkefølge* (screeningsspørgsmål flyttes først)
 - regelbaserede advarsler (fx dobbeltspørgsmål ved "og")
+- AI-feedback end-to-end gennem `/api/claude` mod en lokal efterligning af Claude API'et: nøglen sendes kun fra serveren, browseren kalder aldrig `api.anthropic.com` direkte, og fremmede prompts afvises

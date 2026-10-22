@@ -367,6 +367,57 @@ function ruleBasedChecks(question) {
 // API-KALD TIL CLAUDE
 // ============================================================================
 
+// På Netlify går kaldet gennem /api/claude (netlify/functions/claude.mjs), hvor API-nøglen
+// ligger. Køres siden som Claude-artifact, findes /api/claude ikke - så bruges artifactets
+// indbyggede adgang til Claude i stedet.
+const AI_PROXY = '/api/claude';
+const ARTIFACT_MODEL = 'claude-sonnet-4-20250514';
+
+async function callClaude(prompt) {
+  let res = null;
+  if (window.location.protocol.startsWith('http')) {
+    try {
+      res = await fetch(AI_PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+    } catch (e) { res = null; }
+  }
+  if (res && res.status !== 404) {
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `serveren svarede med ${res.status}`);
+    return data.text || '';
+  }
+  // Fallback: Claude-artifact
+  let direct;
+  try {
+    direct = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: ARTIFACT_MODEL, max_tokens: 1000, messages: [{ role: 'user', content: prompt }] }),
+    });
+  } catch (e) {
+    throw new Error('AI-feedback kræver, at siden åbnes fra Netlify-adressen (eller som Claude-artifact)');
+  }
+  if (!direct.ok) throw new Error(`API svarede med ${direct.status}`);
+  const data = await direct.json();
+  return data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+}
+
+// Alle feedback-prompts beder om ren JSON; svaret pakkes ud her
+async function askClaudeForJson(prompt) {
+  try {
+    const text = await callClaude(prompt);
+    const cleaned = text.replace(/```json|```/g, '').trim();
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Kunne ikke læse AI-svaret');
+    return JSON.parse(match[0]);
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
 const FEEDBACK_TONE = `SPROG - hold det enkelt og direkte:
 - Korte sætninger, højst ca. 15 ord. Hellere to korte end én lang med "hvorved", "således at" og "i forhold til".
 - Aktivt sprog: "du måler X" frem for "der måles X".
@@ -417,26 +468,7 @@ Svar UDELUKKENDE med gyldig JSON i præcis dette format:
   "suggestion": null
 }`;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!res.ok) throw new Error(`API svarede med ${res.status}`);
-    const data = await res.json();
-    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-    const cleaned = text.replace(/```json|```/g, '').trim();
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Kunne ikke parse svar');
-    return JSON.parse(match[0]);
-  } catch (e) {
-    return { error: e.message };
-  }
+  return askClaudeForJson(prompt);
 }
 
 async function evaluateEmneWithAI(construct, topic) {
@@ -508,26 +540,7 @@ Svar UDELUKKENDE med gyldig JSON i præcis dette format:
   "suggestion": null
 }`;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!res.ok) throw new Error(`API svarede med ${res.status}`);
-    const data = await res.json();
-    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-    const cleaned = text.replace(/```json|```/g, '').trim();
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Kunne ikke parse svar');
-    return JSON.parse(match[0]);
-  } catch (e) {
-    return { error: e.message };
-  }
+  return askClaudeForJson(prompt);
 }
 
 async function evaluateSkalaWithAI(construct, scale, justification, topic) {
@@ -569,26 +582,7 @@ Svar UDELUKKENDE med gyldig JSON i præcis dette format:
   "suggestion": "Forslag til begrundelse..."
 }`;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!res.ok) throw new Error(`API svarede med ${res.status}`);
-    const data = await res.json();
-    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-    const cleaned = text.replace(/```json|```/g, '').trim();
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Kunne ikke parse svar');
-    return JSON.parse(match[0]);
-  } catch (e) {
-    return { error: e.message };
-  }
+  return askClaudeForJson(prompt);
 }
 
 async function evaluateOrderWithAI(constructs, scaleChoices, questions, topic) {
@@ -648,26 +642,7 @@ Svar UDELUKKENDE med gyldig JSON i præcis dette format:
   "suggestion_reasoning": null
 }`;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!res.ok) throw new Error(`API svarede med ${res.status}`);
-    const data = await res.json();
-    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-    const cleaned = text.replace(/```json|```/g, '').trim();
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Kunne ikke parse svar');
-    return JSON.parse(match[0]);
-  } catch (e) {
-    return { error: e.message };
-  }
+  return askClaudeForJson(prompt);
 }
 
 // ============================================================================

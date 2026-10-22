@@ -1,0 +1,13 @@
+# Netlify: bygger index.html til dist/ og udgiver AI-proxyen netlify/functions/claude.mjs på /api/claude.
+# Sæt miljøvariablen ANTHROPIC_API_KEY under Site configuration → Environment variables.
+# Valgfrit: AI_MODEL (standard claude-opus-5-5) og AI_EFFORT (low, medium eller high; standard low).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
