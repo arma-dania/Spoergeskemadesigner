@@ -2,8 +2,8 @@
 
 | Side | Repository | Rolle |
 |---|---|---|
-| **Spørgeskemadesigneren** | `arma-dania/Spoergeskemadesigner` (`spoergeskemadesigner.jsx`) | Sprint 2: fra formål til spørgeskema og kodebog |
-| **Statistiske test** | `arma-dania/tests`, gren `claude/upbeat-fermi-th1k12` (`statistiske_test.jsx`, `data/`) | Sprint 3: fra datasæt til Chi², t-test og ANOVA |
+| **Spørgeskemadesigneren** | `arma-dania/Spoergeskemadesigner` (`spoergeskemadesigner.jsx`) | Kvantitativ metode, sprint 3: fra formål til spørgeskema og kodebog |
+| **Statistiske test** | `arma-dania/tests` (`statistiske_test.jsx`, `data/`) | Kvantitativ metode, sprint 3: fra datasæt til Chi², t-test og ANOVA |
 
 **Status (oktober 2026):** Alle fundne uoverensstemmelser er rettet. Knappen *Indlæs eksempel: SonicWave* i designeren giver en kodebog, der er **ordret den samme** som kodebogen på statistiksiden (§ 01) og i `sonicwave_spoergeskema.xlsx`. Statistiksiden har én ekstra række, den afledte variabel *aldersgruppe*. Testtallene i casene er uændrede: χ² = 103,94, χ²(3) = 26,46, t = 2,68 og F = 10,17.
 
@@ -32,7 +32,7 @@
 ### I Spørgeskemadesigneren
 | | Før | Nu |
 |---|---|---|
-| D1 | Likert, vigtighed og sandsynlighed: "ordinal med metrisk tilføjelse (behandles som interval)" | **Ordinal**. Vis fordelingen, og test med Chi² (som statistiksiden) |
+| D1 | Likert, vigtighed og sandsynlighed: "ordinal med metrisk tilføjelse (behandles som interval)" | **Ordinal**. Vis svarene som en fordeling (som statistiksiden) |
 | D2 | Numerisk skala 0–10 som "interval" | "Ordinal (behandles som interval)", og en ny 1–10-variant |
 | D3 | Ingen skala til præcise tal | Ny skala **Talsvar (præcist tal)**, ratio |
 | D4 | Kun screening | **Springlogik** ved siden af screening. Den vises i udkast og kodebog, rækkefølgetrinnet advarer, og AI-prompten forstår den |
@@ -40,7 +40,6 @@
 | D6 | "Ved ikke" kun ved multiple choice | "Ved ikke" på Likert, vigtighed og sandsynlighed, med koden 99 → tom celle |
 | D7 | Intet eksempel, ingen kodebog | **Indlæs eksempel: SonicWave** og kodebog i trin 6 (skærm, Word/PDF, .txt, .csv) med statistiksidens kolonner |
 | + | Svarmuligheder var pladsholdere | Den studerende skriver selv svarmuligheder, enhed eller endepunkter |
-| + | Skalakort uden analyse | Hvert skalakort viser, om svarene bruges i Chi², t-test eller ANOVA |
 | + | Siden gik i hvidt ved nyt emne + spring frem; intet blev gemt | Man kan ikke hoppe forbi et ufærdigt trin; arbejdet gemmes automatisk |
 
 ### I SonicWave-casen (statistiksiden og datasættet)

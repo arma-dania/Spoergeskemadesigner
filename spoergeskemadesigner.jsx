@@ -43,8 +43,7 @@ const SCALES = [
     label: 'Likert-skala (5 punkter)',
     measurement: 'ordinal',
     codebookLevel: 'Ordinal (Likert)',
-    analysis: 'Chi²: svarfordelingen (fx enig/neutral/uenig) mod en gruppevariabel',
-    description: 'Symmetrisk enighedsskala med numeriske ankre (1-5). Ét udsagn er ordinalt: Vi ved, at 4 er mere enig end 3, men ikke at afstandene er lige store. Vis fordelingen, og test sammenhænge med Chi².',
+    description: 'Symmetrisk enighedsskala med numeriske ankre (1-5). Ét udsagn er ordinalt: Vi ved, at 4 er mere enig end 3, men ikke at afstandene er lige store. Vis svarene som en fordeling, fx andelen der er enige.',
     responseOptions: ['1 Helt uenig', '2 Uenig', '3 Hverken eller', '4 Enig', '5 Helt enig', 'Ved ikke'],
     bestFor: ['holdning', 'intention'],
     formulationHint: 'Formuleres som påstand, ikke spørgsmål: "Jeg er tilfreds med…"',
@@ -55,7 +54,6 @@ const SCALES = [
     label: 'Likert-skala (7 punkter)',
     measurement: 'ordinal',
     codebookLevel: 'Ordinal (Likert)',
-    analysis: 'Chi²: svarfordelingen (gerne sammenlagt til enig/neutral/uenig) mod en gruppevariabel',
     description: 'Mere differentieret enighedsskala med numeriske ankre (1-7). Ordinal ligesom 5-punkts Likert - giver flere nuancer, men også flere celler i en krydstabel.',
     responseOptions: ['1 Helt uenig', '2 Uenig', '3 Lidt uenig', '4 Hverken eller', '5 Lidt enig', '6 Enig', '7 Helt enig', 'Ved ikke'],
     bestFor: [],
@@ -67,7 +65,6 @@ const SCALES = [
     label: 'Semantisk differential',
     measurement: 'ordinal (behandles ofte som interval)',
     codebookLevel: 'Interval*',
-    analysis: 't-test/ANOVA: sammenlign gennemsnit mellem grupper',
     description: 'To modsatrettede udtryk med en skala imellem.',
     responseOptions: ['Eks: Billig — — — — — — — Dyr'],
     bestFor: ['holdning'],
@@ -79,7 +76,6 @@ const SCALES = [
     label: 'Numerisk skala (0-10)',
     measurement: 'ordinal (behandles som interval)',
     codebookLevel: 'Interval*',
-    analysis: 't-test/ANOVA: sammenlign gennemsnit mellem grupper',
     description: 'Talvurdering, fx NPS-stilen 0-10. Med mange trin behandles den som interval, så du kan regne gennemsnit.',
     responseOptions: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
     bestFor: ['holdning', 'intention'],
@@ -91,7 +87,6 @@ const SCALES = [
     label: 'Numerisk skala (1-10)',
     measurement: 'ordinal (behandles som interval)',
     codebookLevel: 'Interval*',
-    analysis: 't-test/ANOVA: sammenlign gennemsnit mellem grupper',
     description: 'Talvurdering fra 1 til 10, fx samlet tilfredshed. Med mange trin behandles den som interval, så du kan regne gennemsnit.',
     responseOptions: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
     bestFor: ['holdning'],
@@ -103,7 +98,6 @@ const SCALES = [
     label: 'Talsvar (præcist tal)',
     measurement: 'ratio',
     codebookLevel: 'Ratio',
-    analysis: 't-test/ANOVA som det, der måles (fx ordreværdi). Kan også inddeles i grupper (fx aldersgrupper) og bruges i Chi²',
     description: 'Respondenten skriver et tal: alder i år, beløb i kroner, antal gange. Giver de mest præcise data - grupper kan altid dannes bagefter i analysen.',
     responseOptions: ['_____ (tal med enhed)'],
     bestFor: ['adfaerd', 'demografi'],
@@ -114,7 +108,6 @@ const SCALES = [
     id: 'frekvens_vag',
     label: 'Frekvensskala (vag)',
     measurement: 'ordinal',
-    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
     description: 'Vage frekvensord som "ofte", "sjældent".',
     responseOptions: ['Aldrig', 'Sjældent', 'Nogle gange', 'Ofte', 'Altid'],
     bestFor: ['adfaerd'],
@@ -125,7 +118,6 @@ const SCALES = [
     id: 'frekvens_konkret',
     label: 'Frekvensskala (konkret)',
     measurement: 'ordinal',
-    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
     description: 'Faktiske antalsintervaller for adfærd. Intervallerne gør skalaen ordinal - vil du regne gennemsnit, så spørg til det præcise antal (Talsvar).',
     responseOptions: ['0 gange', '1-2 gange', '3-5 gange', '6-10 gange', 'Mere end 10 gange'],
     bestFor: ['adfaerd'],
@@ -137,8 +129,7 @@ const SCALES = [
     label: 'Vigtighedsskala',
     measurement: 'ordinal',
     codebookLevel: 'Ordinal',
-    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
-    description: 'Hvor vigtigt et aspekt er for respondenten (1-5). Ordinal ligesom Likert: vis fordelingen, og test sammenhænge med Chi².',
+    description: 'Hvor vigtigt et aspekt er for respondenten (1-5). Ordinal ligesom Likert: vis svarene som en fordeling.',
     responseOptions: ['1 Slet ikke vigtigt', '2 Lidt vigtigt', '3 Nogenlunde vigtigt', '4 Vigtigt', '5 Meget vigtigt', 'Ved ikke'],
     bestFor: ['holdning'],
     formulationHint: '"Hvor vigtigt er X, når du…?"',
@@ -149,8 +140,7 @@ const SCALES = [
     label: 'Sandsynlighedsskala',
     measurement: 'ordinal',
     codebookLevel: 'Ordinal',
-    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
-    description: 'Hvor sandsynligt det er, at respondenten gør noget (1-5). Ordinal ligesom Likert: vis fordelingen, og test sammenhænge med Chi².',
+    description: 'Hvor sandsynligt det er, at respondenten gør noget (1-5). Ordinal ligesom Likert: vis svarene som en fordeling.',
     responseOptions: ['1 Slet ikke sandsynligt', '2 Lidt sandsynligt', '3 Sandsynligt', '4 Meget sandsynligt', '5 Helt sikkert', 'Ved ikke'],
     bestFor: ['intention'],
     formulationHint: '"Hvor sandsynligt er det, at du…?"',
@@ -160,7 +150,6 @@ const SCALES = [
     id: 'mc_single',
     label: 'Multiple choice (ét svar)',
     measurement: 'nominal',
-    analysis: 'Chi²: som gruppevariabel eller som det, der måles. Som gruppe kan den også bruges i t-test (2 grupper) og ANOVA (3+)',
     description: 'Respondenten vælger én svarmulighed. Bruges når operationaliseringen lægger op til netop ét valg - fx præference, kanalvalg eller faktuelt svar.',
     responseOptions: ['Liste over indbyrdes udelukkende muligheder'],
     bestFor: ['holdning', 'adfaerd', 'intention', 'viden', 'demografi'],
@@ -171,7 +160,6 @@ const SCALES = [
     id: 'mc_multi',
     label: 'Multiple choice (flere svar)',
     measurement: 'nominal',
-    analysis: 'Chi² pr. svarmulighed (hver bliver en ja/nej-variabel)',
     description: 'Respondenten kan vælge flere svar samtidigt. Bruges når operationaliseringen lægger op til at flere muligheder kan gælde - fx "hvilke egenskaber er vigtige" (holdning), "hvilke butikker har du besøgt" (adfærd) eller "hvilke vil du overveje" (intention).',
     responseOptions: ['Liste hvor flere kan vælges'],
     bestFor: ['adfaerd', 'viden'],
@@ -182,7 +170,6 @@ const SCALES = [
     id: 'rang',
     label: 'Rangordning',
     measurement: 'ordinal',
-    analysis: 'Passer ikke direkte til Chi², t-test eller ANOVA - overvej en vigtighedsskala i stedet',
     description: 'Respondenten ranker elementer i prioritetsrækkefølge. Velegnet både til at indfange relative præferencer (holdning) og prioritering af planlagte handlinger (intention).',
     responseOptions: ['1. plads, 2. plads, 3. plads…'],
     bestFor: [],
@@ -193,7 +180,6 @@ const SCALES = [
     id: 'aaben',
     label: 'Åbent spørgsmål',
     measurement: 'kvalitativt',
-    analysis: 'Svarene skal kategoriseres først - derefter kan kategorierne bruges i Chi²',
     description: 'Respondenten skriver svar med egne ord.',
     responseOptions: ['Fri tekst'],
     bestFor: ['viden'],
@@ -204,7 +190,6 @@ const SCALES = [
     id: 'kategorier',
     label: 'Kategoriserede svar',
     measurement: 'ordinal eller nominal',
-    analysis: 'Chi²: som gruppevariabel eller som det, der måles',
     description: 'Foruddefinerede kategorier - typisk demografiske, men også prisintervaller, beløbsstørrelser eller andre naturligt kategoriserbare værdier.',
     responseOptions: ['Aldersgrupper, indkomst- eller prisintervaller, m.v.'],
     bestFor: ['adfaerd', 'intention', 'demografi'],
@@ -774,7 +759,7 @@ function TopicStep({ topic, setTopic, onNext, onLoadExample }) {
         <div className="flex-1" style={{ minWidth: '240px' }}>
           <p className="text-sm" style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, color: 'var(--ink)' }}>Se et færdigt eksempel: SonicWave</p>
           <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-            Højttalerproducenten SonicWave er casen i databehandlingen. Eksemplet viser alle seks trin med screening, springlogik og kodebog — præcis det skema, datasættet på statistiksiden kommer fra.
+            Højttalerproducenten SonicWave er casen i den kvantitative metode. Eksemplet viser alle seks trin med screening, springlogik og kodebog — det samme skema, som datasættet på statistiksiden kommer fra.
           </p>
         </div>
         <button onClick={onLoadExample} className="px-4 py-2 text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--ink)', backgroundColor: 'transparent' }}>
@@ -1187,7 +1172,7 @@ function ScalesStep({ topic, constructs, scaleChoices, setScaleChoices, onBack, 
       <StepHeader
         number={3}
         title="Hvilken skala passer til hvert emne?"
-        subtitle="Valg af svarskala bestemmer både hvad respondenten kan udtrykke - og hvilke statistiske analyser du kan lave bagefter. I databehandlingen skal du kunne bruge Chi², t-test og ANOVA, så hvert skalakort viser, hvilken af dem svarene kan bruges i. Match emnets natur til skalaens måleniveau."
+        subtitle="Valg af svarskala bestemmer både hvad respondenten kan udtrykke - og hvilke statistiske analyser du kan lave bagefter. En holdning måles ikke med en frekvensskala. En adfærd måles ikke med en Likert-skala. Match emnets natur til skalaens måleniveau."
       />
 
       <div className="space-y-8">
@@ -1322,11 +1307,8 @@ function ScaleCard({ scale, chosen, onClick, recommended }) {
         </span>
         {chosen && <span className="text-xs" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>Valgt</span>}
       </div>
-      <p className="text-xs mb-1" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+      <p className="text-xs mb-2" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
         Måleniveau: {scale.measurement}
-      </p>
-      <p className="text-xs mb-2" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
-        Analyse: {scale.analysis}
       </p>
       <p className="text-sm mb-3" style={{ color: 'var(--ink)', fontFamily: 'IBM Plex Sans, sans-serif', lineHeight: 1.5 }}>
         {scale.description}
@@ -1954,7 +1936,6 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
       out += `${idx + 1}. ${c.name}${screeningTag} · ${ctype}\n`;
       out += `   Operationalisering: ${c.definition}\n`;
       out += `   Skala: ${scale?.label ?? '?'} (${scale?.measurement ?? '?'})\n`;
-      if (scale?.analysis) out += `   Analyse: ${scale.analysis}\n`;
       if (notes.length) out += `   Rute: ${notes.join('; ')}\n`;
       if (justification) out += `   Begrundelse: ${justification}\n`;
       out += `\n`;
@@ -2003,7 +1984,6 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
           </p>
           <p class="design-def">${escape(c.definition)}</p>
           <p class="design-meta"><strong>Skala:</strong> ${escape(scale?.label || '')} <em>(${escape(scale?.measurement || '')})</em></p>
-          ${scale?.analysis ? `<p class="design-meta"><strong>Analyse:</strong> ${escape(scale.analysis)}</p>` : ''}
           ${routingNotes(c, constructs, numbers).length ? `<p class="design-meta"><strong>Rute:</strong> ${escape(routingNotes(c, constructs, numbers).join('; '))}</p>` : ''}
           ${choice.justification ? `<p class="design-meta"><strong>Begrundelse:</strong> ${escape(choice.justification)}</p>` : ''}
         </div>
@@ -2134,7 +2114,7 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
 
   <div class="divider-strong"></div>
   <p class="section-heading">Kodebog</p>
-  <p class="subtitle">Samme kolonner som kodebogen i databehandlingen (statistiksiden). Tilføj selv afledte variable, fx aldersgruppe.</p>
+  <p class="subtitle">Samme kolonner som kodebogen på statistiksiden. Tilføj selv afledte variable, fx aldersgruppe.</p>
   ${codebookHtml}
 
   <div class="checklist">
@@ -2390,11 +2370,6 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
                       <p className="text-xs" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                         <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Skala: </span>{scale?.label} <span style={{ fontStyle: 'italic' }}>({scale?.measurement})</span>
                       </p>
-                      {scale?.analysis && (
-                        <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-                          <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Analyse: </span>{scale.analysis}
-                        </p>
-                      )}
                       {routingNotes(c, constructs, numbers).length > 0 && (
                         <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                           <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Rute: </span>{routingNotes(c, constructs, numbers).join('; ')}
@@ -2452,7 +2427,7 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
                 Kodebog
               </p>
               <p className="text-sm mb-4" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-                Sådan bliver svarene til data. Kolonnerne er de samme som i kodebogen på statistiksiden, du bruger i databehandlingen.
+                Sådan bliver svarene til data. Kolonnerne er de samme som i kodebogen på statistiksiden.
               </p>
               <div style={{ overflowX: 'auto' }}>
                 <table className="w-full text-xs" style={{ borderCollapse: 'collapse', fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)' }}>
@@ -2736,18 +2711,18 @@ const INTRO_SCENES = [
   },
   {
     title: 'Skalavalg',
-    caption: 'Vælg en svarskala til hvert emne. Skalaens måleniveau afgør, hvilken test du kan bruge i databehandlingen.',
+    caption: 'Vælg en svarskala til hvert emne. Skalaen bestemmer måleniveauet — hvilken slags data svarene bliver til.',
     render: () => (
       <div className="flex flex-wrap justify-center gap-4 w-full">
         {[
-          ['Alder', 'Talsvar', 'ratio', 't-test · ANOVA · grupper → Chi²'],
-          ['Foretrukken farve', 'Multiple choice', 'nominal', 'Chi²'],
-          ['Ejer en SonicWave', 'Ja / Nej', 'nominal', 'Chi² · filter'],
-        ].map(([label, scale, level, test], i) => (
+          ['Alder', 'demografi', 'Talsvar', 'ratio'],
+          ['Foretrukken farve', 'holdning', 'Multiple choice', 'nominal'],
+          ['Ejer en SonicWave', 'adfærd', 'Ja / Nej', 'nominal'],
+        ].map(([label, type, scale, level], i) => (
           <div key={label} className="flex flex-col items-center gap-2">
-            <IntroChip label={label} type={level} />
+            <IntroChip label={label} type={type} />
             <Anim delay={0.5 + i * 0.5} kind="introSlideIn" className="text-xs px-2 py-1" style={{ ...introFont, color: 'var(--paper)', backgroundColor: 'var(--ink)' }}>{scale}</Anim>
-            <Anim delay={1.9 + i * 0.3} kind="introPop" className="text-xs px-2 py-1" style={{ ...introFont, color: 'var(--accent)', border: '1px solid var(--accent)', fontWeight: 600 }}>{test}</Anim>
+            <Anim delay={1.9 + i * 0.3} kind="introPop" className="text-xs px-2 py-1" style={{ ...introFont, color: 'var(--accent)', border: '1px solid var(--accent)', fontWeight: 600 }}>Måleniveau: {level}</Anim>
           </div>
         ))}
       </div>
@@ -2780,7 +2755,7 @@ const INTRO_SCENES = [
   },
   {
     title: 'Færdigt udkast',
-    caption: 'Du får et færdigt skema til pilottest og en kodebog. Kodebogen er broen til databehandlingen med Chi², t-test og ANOVA.',
+    caption: 'Du får et færdigt skema til pilottest og en kodebog, der viser, hvordan svarene bliver til data.',
     render: () => (
       <div className="flex flex-wrap justify-center items-start gap-5 w-full">
         <Anim className="p-4" style={{ width: '14rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)', boxShadow: '0 2px 6px rgba(26,35,50,0.08)' }}>
@@ -2801,7 +2776,7 @@ const INTRO_SCENES = [
             </Anim>
           ))}
           <Anim delay={3.1} kind="introPop" className="mt-3 text-xs text-center px-2 py-1" style={{ ...introFont, color: 'var(--paper)', backgroundColor: 'var(--accent)', fontWeight: 600 }}>
-            Chi² · t-test · ANOVA
+            Klar til pilottest
           </Anim>
         </Anim>
       </div>
@@ -2868,13 +2843,13 @@ function StepsAnimation() {
 function IntroPage({ onStart, onLoadExample, hasWork }) {
   const cards = [
     ['Formål', 'At lære at designe et spørgeskema, hvor hvert spørgsmål har en grund til at være der — og hvor svarene kan bruges til at træffe en beslutning.'],
-    ['Til hvem', 'Studerende i markedsanalyse. Værktøjet bruges, når I skal lave et spørgeskema. Bagefter arbejder I videre med data på statistiksiden.'],
+    ['Til hvem', 'Studerende i markedsanalyse, der skal lave en kvantitativ undersøgelse som en del af metoden i sprint 3.'],
     ['Det får du', 'Et færdigt udkast til pilottest og en kodebog, der viser, hvordan svarene bliver til data. Det kan hentes som Word, PDF, tekst og CSV.'],
   ];
   const howTo = [
     ['Start med formålet.', 'Hvilken beslutning skal undersøgelsen hjælpe med? Resten udledes derfra.'],
     ['Brug feedbacken som sparring.', 'De automatiske advarsler og AI-feedbacken peger på svagheder — men det er dig, der beslutter.'],
-    ['Kig på eksemplet.', 'SonicWave-eksemplet viser alle seks trin færdige. Det er det samme skema, som datasættet i databehandlingen kommer fra.'],
+    ['Kig på eksemplet.', 'SonicWave-eksemplet viser alle seks trin færdige. Det er det samme skema, som datasættet på statistiksiden kommer fra.'],
     ['Niveau 2 er valgfrit.', 'Bokse mærket “Niveau 2” går et skridt videre (fx indeks af flere udsagn). Du skal ikke bruge dem.'],
     ['Dit arbejde gemmes.', 'Alt gemmes automatisk i browseren. Hent udkastet, når du er færdig, og pilottest det på 3–5 personer.'],
   ];
@@ -2920,11 +2895,11 @@ function IntroPage({ onStart, onLoadExample, hasWork }) {
           </ol>
         </div>
         <aside className="p-6" style={{ backgroundColor: 'var(--paper-warm)', borderLeft: '2px solid var(--accent)' }}>
-          <h3 className="text-xs uppercase tracking-[0.18em] mb-3" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Hænger sammen med databehandlingen</h3>
+          <h3 className="text-xs uppercase tracking-[0.18em] mb-3" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Del af den kvantitative metode</h3>
           <p className="text-sm" style={{ ...introFont, color: 'var(--ink)', lineHeight: 1.6 }}>
-            Skalaen, du vælger i trin 3, bestemmer, om svarene senere kan bruges i <em style={introSerif}>Chi²</em>,
-            en <em style={introSerif}>t-test</em> eller en <em style={introSerif}>ANOVA</em>. Hvert skalakort viser det,
-            og kodebogen i trin 6 har samme form som kodebogen på statistiksiden.
+            En markedsundersøgelse kræver metode — både kvalitativ og kvantitativ. Spørgeskemadesigneren og
+            statistiksiden hører til den kvantitative del: Her designer du spørgeskemaet, og på statistiksiden arbejder du
+            med de data, et spørgeskema giver. Kodebogen i trin 6 har samme form som kodebogen dér.
           </p>
         </aside>
       </div>
@@ -2988,14 +2963,14 @@ function sonicWaveExample() {
   ];
   const scale = (scaleId, justification) => ({ scaleId, justification });
   const scaleChoices = {
-    [C.alder]: scale('talsvar', 'Præcis alder kan bruges til screening og kan bagefter inddeles i aldersgrupper til Chi².'),
-    [C.farve]: scale('mc_single', 'Respondenten vælger én af tre farver - nominale data til en krydstabel og Chi².'),
+    [C.alder]: scale('talsvar', 'Præcis alder kan bruges til screening og kan bagefter inddeles i aldersgrupper.'),
+    [C.farve]: scale('mc_single', 'Respondenten vælger én af tre farver, der ikke har nogen rækkefølge - nominale data.'),
     [C.ejer]: scale('mc_single', 'Ja/nej-spørgsmål, der styrer springlogikken.'),
-    [C.linje]: scale('mc_single', 'Fire produktlinjer giver fire grupper, der kan sammenlignes med ANOVA.'),
-    [C.kanal]: scale('mc_single', 'Én købskanal pr. kunde - to kanaler kan sammenlignes med en t-test.'),
-    [C.ordre]: scale('talsvar', 'Beløb i kroner er ratiodata, så gennemsnit kan sammenlignes med t-test og ANOVA.'),
-    [C.tilfreds]: scale('numerisk10', 'Ti trin giver nok variation til at behandle tilfredshed som interval og bruge ANOVA.'),
-    [C.holdning]: scale('likert5', 'Påstande om brandet måles bedst som enighed; fordelingen kan testes med Chi².'),
+    [C.linje]: scale('mc_single', 'Kunden ejer én af fire produktlinjer, så der skal kun vælges ét svar.'),
+    [C.kanal]: scale('mc_single', 'Kunden har købt sin højttaler ét sted, så der skal kun vælges ét svar.'),
+    [C.ordre]: scale('talsvar', 'Et beløb i kroner er et præcist tal med et naturligt nulpunkt - ratiodata.'),
+    [C.tilfreds]: scale('numerisk10', 'Ti trin giver nok nuancer til at fange forskelle i tilfredshed.'),
+    [C.holdning]: scale('likert5', 'Påstande om brandet måles bedst som grad af enighed.'),
     [C.koen]: scale('mc_single', 'Nominal baggrundsvariabel med mulighed for ikke at oplyse.'),
   };
   const questions = {
@@ -3172,7 +3147,7 @@ export default function App() {
             Fra emne til <span style={{ fontStyle: 'italic' }}>spørgsmål</span>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            En struktureret guide i seks trin fra formål til færdigt spørgeskema og kodebog — klar til databehandlingen med Chi², t-test og ANOVA.
+            En struktureret guide i seks trin fra formål til færdigt spørgeskema og kodebog.
           </p>
           <button
             onClick={showIntro ? startFromIntro : openIntro}
