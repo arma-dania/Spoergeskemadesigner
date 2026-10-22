@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Spørgeskemadesigner: clipboard med to afkrydsningsfelter (det første krydset af) og en linje til fritekst -->
+  <rect x="11.5" y="8" width="41" height="52.5" rx="4.5" fill="#fbf8f1" stroke="#1a2332" stroke-width="2.6"/>
+  <rect x="23.5" y="3.5" width="17" height="9" rx="3.5" fill="#efe9dc" stroke="#1a2332" stroke-width="2.6"/>
+  <rect x="18.5" y="20.5" width="9.5" height="9.5" rx="1.2" stroke="#7a2e3d" stroke-width="2.3"/>
+  <path d="M20.8 25.4l2.2 2.2 3.6-4.7" stroke="#7a2e3d" stroke-width="2.3"/>
+  <path d="M33 25.2h13" stroke="#1a2332" stroke-width="2.6"/>
+  <rect x="18.5" y="35.5" width="9.5" height="9.5" rx="1.2" stroke="#1a2332" stroke-width="2.3"/>
+  <path d="M33 40.2h13" stroke="#1a2332" stroke-width="2.6"/>
+  <path d="M18.5 53h27.5" stroke="#1a2332" stroke-width="2.6" opacity=".45"/>
+</svg>

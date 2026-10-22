@@ -2,7 +2,7 @@
 // (React, app-kode og Tailwind-CSS lægges inline - kun Google Fonts hentes udefra).
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -46,6 +46,9 @@ try {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spørgeskemadesigner</title>
 <meta name="description" content="Fra emne til spørgsmål - struktureret guide til spørgeskemadesign i markedsanalyse.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>${css}</style>
@@ -62,6 +65,9 @@ try {
   // Netlify udgiver kun mappen dist/ (se netlify.toml)
   mkdirSync(join(root, 'dist'), { recursive: true });
   writeFileSync(join(root, 'dist', 'index.html'), html);
+  for (const icon of ['favicon.svg', 'favicon-32.png', 'apple-touch-icon.png']) {
+    copyFileSync(join(root, icon), join(root, 'dist', icon));
+  }
   console.log(`index.html skrevet (${(html.length / 1024).toFixed(0)} KB)`);
 } finally {
   rmSync(tmp, { recursive: true, force: true });

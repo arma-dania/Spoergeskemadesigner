@@ -2941,6 +2941,22 @@ function IntroPage({ onStart, onLoadExample, hasWork }) {
   );
 }
 
+// Logoet: clipboard med to afkrydsningsfelter og en fritekstlinje (samme tegning som favicon.svg)
+function ClipboardMark({ size = 96 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <rect x="11.5" y="8" width="41" height="52.5" rx="4.5" fill="#fbf8f1" stroke="var(--ink)" strokeWidth="2.6" />
+      <rect x="23.5" y="3.5" width="17" height="9" rx="3.5" fill="var(--paper-warm)" stroke="var(--ink)" strokeWidth="2.6" />
+      <rect x="18.5" y="20.5" width="9.5" height="9.5" rx="1.2" stroke="var(--accent)" strokeWidth="2.3" />
+      <path d="M20.8 25.4l2.2 2.2 3.6-4.7" stroke="var(--accent)" strokeWidth="2.3" />
+      <path d="M33 25.2h13" stroke="var(--ink)" strokeWidth="2.6" />
+      <rect x="18.5" y="35.5" width="9.5" height="9.5" rx="1.2" stroke="var(--ink)" strokeWidth="2.3" />
+      <path d="M33 40.2h13" stroke="var(--ink)" strokeWidth="2.6" />
+      <path d="M18.5 53h27.5" stroke="var(--ink)" strokeWidth="2.6" opacity=".45" />
+    </svg>
+  );
+}
+
 // ============================================================================
 // EKSEMPEL: SONICWAVE
 // Samme spørgsmål, rækkefølge, måleniveauer og koder som kodebogen på
@@ -3147,7 +3163,8 @@ export default function App() {
       `}</style>
 
       <header className="border-b" style={{ borderColor: 'var(--rule)', backgroundColor: 'var(--paper-warm)' }}>
-        <div className="max-w-6xl mx-auto px-8 py-8">
+        <div className="max-w-6xl mx-auto px-8 py-8 flex items-center justify-between gap-6">
+          <div>
           <p className="text-xs uppercase tracking-[0.25em] mb-2" style={{ color: 'var(--accent)', fontWeight: 600 }}>
             Spørgeskemadesigner · markedsanalyse
           </p>
@@ -3164,6 +3181,8 @@ export default function App() {
           >
             {showIntro ? 'Gå til værktøjet →' : 'Om værktøjet og de seks trin'}
           </button>
+          </div>
+          <div className="hidden sm:block"><ClipboardMark size={104} /></div>
         </div>
       </header>
 
