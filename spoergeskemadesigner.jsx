@@ -41,19 +41,23 @@ const SCALES = [
   {
     id: 'likert5',
     label: 'Likert-skala (5 punkter)',
-    measurement: 'ordinal med metrisk tilføjelse (behandles som interval)',
-    description: 'Symmetrisk enighedsskala med numeriske ankre (1-5). Det er den metriske tilføjelse og antagelsen om lige afstand mellem trinene, der gør skalaen behandlelig som interval - og dermed adskiller Likert fra rent ordinale skalaer.',
-    responseOptions: ['1 Helt uenig', '2 Uenig', '3 Hverken eller', '4 Enig', '5 Helt enig'],
+    measurement: 'ordinal',
+    codebookLevel: 'Ordinal (Likert)',
+    analysis: 'Chi²: svarfordelingen (fx enig/neutral/uenig) mod en gruppevariabel',
+    description: 'Symmetrisk enighedsskala med numeriske ankre (1-5). Ét udsagn er ordinalt: Vi ved, at 4 er mere enig end 3, men ikke at afstandene er lige store. Vis fordelingen, og test sammenhænge med Chi².',
+    responseOptions: ['1 Helt uenig', '2 Uenig', '3 Hverken eller', '4 Enig', '5 Helt enig', 'Ved ikke'],
     bestFor: ['holdning', 'intention'],
     formulationHint: 'Formuleres som påstand, ikke spørgsmål: "Jeg er tilfreds med…"',
-    pitfall: 'Hold skala-retningen konsistent gennem hele spørgeskemaet.',
+    pitfall: '"Ved ikke" er ikke det samme som midtpunktet 3 - det kodes for sig (fx 99) og bliver en tom celle i analysen.',
   },
   {
     id: 'likert7',
     label: 'Likert-skala (7 punkter)',
-    measurement: 'ordinal med metrisk tilføjelse (behandles som interval)',
-    description: 'Mere differentieret enighedsskala med numeriske ankre (1-7). Den metriske tilføjelse muliggør interval-behandling - giver større variation, egnet ved nuancerede holdninger.',
-    responseOptions: ['1 Helt uenig', '2 Uenig', '3 Lidt uenig', '4 Hverken eller', '5 Lidt enig', '6 Enig', '7 Helt enig'],
+    measurement: 'ordinal',
+    codebookLevel: 'Ordinal (Likert)',
+    analysis: 'Chi²: svarfordelingen (gerne sammenlagt til enig/neutral/uenig) mod en gruppevariabel',
+    description: 'Mere differentieret enighedsskala med numeriske ankre (1-7). Ordinal ligesom 5-punkts Likert - giver flere nuancer, men også flere celler i en krydstabel.',
+    responseOptions: ['1 Helt uenig', '2 Uenig', '3 Lidt uenig', '4 Hverken eller', '5 Lidt enig', '6 Enig', '7 Helt enig', 'Ved ikke'],
     bestFor: [],
     formulationHint: 'Formuleres som påstand. Egnet når du forventer nuancerede holdninger.',
     pitfall: 'Kan være overkill - 5 punkter er ofte tilstrækkeligt.',
@@ -61,7 +65,9 @@ const SCALES = [
   {
     id: 'semantisk',
     label: 'Semantisk differential',
-    measurement: 'interval',
+    measurement: 'ordinal (behandles ofte som interval)',
+    codebookLevel: 'Interval*',
+    analysis: 't-test/ANOVA: sammenlign gennemsnit mellem grupper',
     description: 'To modsatrettede udtryk med en skala imellem.',
     responseOptions: ['Eks: Billig — — — — — — — Dyr'],
     bestFor: ['holdning'],
@@ -71,17 +77,44 @@ const SCALES = [
   {
     id: 'numerisk',
     label: 'Numerisk skala (0-10)',
-    measurement: 'interval',
-    description: 'Talvurdering, fx NPS-stilen 0-10.',
+    measurement: 'ordinal (behandles som interval)',
+    codebookLevel: 'Interval*',
+    analysis: 't-test/ANOVA: sammenlign gennemsnit mellem grupper',
+    description: 'Talvurdering, fx NPS-stilen 0-10. Med mange trin behandles den som interval, så du kan regne gennemsnit.',
     responseOptions: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
     bestFor: ['holdning', 'intention'],
     formulationHint: 'Angiv altid hvad endepunkterne betyder ("0 = meget usandsynligt").',
     pitfall: 'Tal tolkes kulturelt forskelligt - en 7\'er kan være enten god eller middel.',
   },
   {
+    id: 'numerisk10',
+    label: 'Numerisk skala (1-10)',
+    measurement: 'ordinal (behandles som interval)',
+    codebookLevel: 'Interval*',
+    analysis: 't-test/ANOVA: sammenlign gennemsnit mellem grupper',
+    description: 'Talvurdering fra 1 til 10, fx samlet tilfredshed. Med mange trin behandles den som interval, så du kan regne gennemsnit.',
+    responseOptions: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    bestFor: ['holdning'],
+    formulationHint: 'Angiv altid hvad endepunkterne betyder ("1 = Meget utilfreds … 10 = Meget tilfreds").',
+    pitfall: 'Der er ingen midte på en 1-10-skala - vil du have et neutralt midtpunkt, så brug 0-10.',
+  },
+  {
+    id: 'talsvar',
+    label: 'Talsvar (præcist tal)',
+    measurement: 'ratio',
+    codebookLevel: 'Ratio',
+    analysis: 't-test/ANOVA som det, der måles (fx ordreværdi). Kan også inddeles i grupper (fx aldersgrupper) og bruges i Chi²',
+    description: 'Respondenten skriver et tal: alder i år, beløb i kroner, antal gange. Giver de mest præcise data - grupper kan altid dannes bagefter i analysen.',
+    responseOptions: ['_____ (tal med enhed)'],
+    bestFor: ['adfaerd', 'demografi'],
+    formulationHint: 'Angiv enheden i spørgsmålet: "Hvor gammel er du? (år)", "Hvad betalte du? (kr.)".',
+    pitfall: 'Gruppér først i analysen, ikke i spørgsmålet - så kan du både regne gennemsnit og danne grupper.',
+  },
+  {
     id: 'frekvens_vag',
     label: 'Frekvensskala (vag)',
     measurement: 'ordinal',
+    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
     description: 'Vage frekvensord som "ofte", "sjældent".',
     responseOptions: ['Aldrig', 'Sjældent', 'Nogle gange', 'Ofte', 'Altid'],
     bestFor: ['adfaerd'],
@@ -91,8 +124,9 @@ const SCALES = [
   {
     id: 'frekvens_konkret',
     label: 'Frekvensskala (konkret)',
-    measurement: 'ordinal eller ratio',
-    description: 'Faktiske antalsintervaller for adfærd.',
+    measurement: 'ordinal',
+    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
+    description: 'Faktiske antalsintervaller for adfærd. Intervallerne gør skalaen ordinal - vil du regne gennemsnit, så spørg til det præcise antal (Talsvar).',
     responseOptions: ['0 gange', '1-2 gange', '3-5 gange', '6-10 gange', 'Mere end 10 gange'],
     bestFor: ['adfaerd'],
     formulationHint: 'Specificér tidsperiode: "...inden for de seneste 30 dage".',
@@ -101,9 +135,11 @@ const SCALES = [
   {
     id: 'vigtighed',
     label: 'Vigtighedsskala',
-    measurement: 'ordinal med metrisk tilføjelse (behandles som interval)',
-    description: 'Hvor vigtigt et aspekt er for respondenten. Med numeriske ankre (1-5) og antagelsen om lige afstand mellem trinene kan skalaen behandles som interval - samme princip som ved Likert.',
-    responseOptions: ['1 Slet ikke vigtigt', '2 Lidt vigtigt', '3 Nogenlunde vigtigt', '4 Vigtigt', '5 Meget vigtigt'],
+    measurement: 'ordinal',
+    codebookLevel: 'Ordinal',
+    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
+    description: 'Hvor vigtigt et aspekt er for respondenten (1-5). Ordinal ligesom Likert: vis fordelingen, og test sammenhænge med Chi².',
+    responseOptions: ['1 Slet ikke vigtigt', '2 Lidt vigtigt', '3 Nogenlunde vigtigt', '4 Vigtigt', '5 Meget vigtigt', 'Ved ikke'],
     bestFor: ['holdning'],
     formulationHint: '"Hvor vigtigt er X, når du…?"',
     pitfall: 'Næsten alt fremstår "vigtigt" - kombinér ofte med rangordning.',
@@ -111,9 +147,11 @@ const SCALES = [
   {
     id: 'sandsynlighed',
     label: 'Sandsynlighedsskala',
-    measurement: 'ordinal med metrisk tilføjelse (behandles som interval)',
-    description: 'Hvor sandsynligt det er, at respondenten gør noget. Med numeriske ankre (1-5) og antagelsen om lige afstand mellem trinene kan skalaen behandles som interval - samme princip som ved Likert og vigtighedsskalaen.',
-    responseOptions: ['1 Slet ikke sandsynligt', '2 Lidt sandsynligt', '3 Sandsynligt', '4 Meget sandsynligt', '5 Helt sikkert'],
+    measurement: 'ordinal',
+    codebookLevel: 'Ordinal',
+    analysis: 'Chi²: svarfordelingen mod en gruppevariabel',
+    description: 'Hvor sandsynligt det er, at respondenten gør noget (1-5). Ordinal ligesom Likert: vis fordelingen, og test sammenhænge med Chi².',
+    responseOptions: ['1 Slet ikke sandsynligt', '2 Lidt sandsynligt', '3 Sandsynligt', '4 Meget sandsynligt', '5 Helt sikkert', 'Ved ikke'],
     bestFor: ['intention'],
     formulationHint: '"Hvor sandsynligt er det, at du…?"',
     pitfall: 'Intentioner overstiger ofte faktisk adfærd - tolk forsigtigt.',
@@ -122,6 +160,7 @@ const SCALES = [
     id: 'mc_single',
     label: 'Multiple choice (ét svar)',
     measurement: 'nominal',
+    analysis: 'Chi²: som gruppevariabel eller som det, der måles. Som gruppe kan den også bruges i t-test (2 grupper) og ANOVA (3+)',
     description: 'Respondenten vælger én svarmulighed. Bruges når operationaliseringen lægger op til netop ét valg - fx præference, kanalvalg eller faktuelt svar.',
     responseOptions: ['Liste over indbyrdes udelukkende muligheder'],
     bestFor: ['holdning', 'adfaerd', 'intention', 'viden', 'demografi'],
@@ -132,6 +171,7 @@ const SCALES = [
     id: 'mc_multi',
     label: 'Multiple choice (flere svar)',
     measurement: 'nominal',
+    analysis: 'Chi² pr. svarmulighed (hver bliver en ja/nej-variabel)',
     description: 'Respondenten kan vælge flere svar samtidigt. Bruges når operationaliseringen lægger op til at flere muligheder kan gælde - fx "hvilke egenskaber er vigtige" (holdning), "hvilke butikker har du besøgt" (adfærd) eller "hvilke vil du overveje" (intention).',
     responseOptions: ['Liste hvor flere kan vælges'],
     bestFor: ['adfaerd', 'viden'],
@@ -142,6 +182,7 @@ const SCALES = [
     id: 'rang',
     label: 'Rangordning',
     measurement: 'ordinal',
+    analysis: 'Passer ikke direkte til Chi², t-test eller ANOVA - overvej en vigtighedsskala i stedet',
     description: 'Respondenten ranker elementer i prioritetsrækkefølge. Velegnet både til at indfange relative præferencer (holdning) og prioritering af planlagte handlinger (intention).',
     responseOptions: ['1. plads, 2. plads, 3. plads…'],
     bestFor: [],
@@ -152,6 +193,7 @@ const SCALES = [
     id: 'aaben',
     label: 'Åbent spørgsmål',
     measurement: 'kvalitativt',
+    analysis: 'Svarene skal kategoriseres først - derefter kan kategorierne bruges i Chi²',
     description: 'Respondenten skriver svar med egne ord.',
     responseOptions: ['Fri tekst'],
     bestFor: ['viden'],
@@ -162,6 +204,7 @@ const SCALES = [
     id: 'kategorier',
     label: 'Kategoriserede svar',
     measurement: 'ordinal eller nominal',
+    analysis: 'Chi²: som gruppevariabel eller som det, der måles',
     description: 'Foruddefinerede kategorier - typisk demografiske, men også prisintervaller, beløbsstørrelser eller andre naturligt kategoriserbare værdier.',
     responseOptions: ['Aldersgrupper, indkomst- eller prisintervaller, m.v.'],
     bestFor: ['adfaerd', 'intention', 'demografi'],
@@ -176,7 +219,116 @@ const CONSTRUCT_TYPE_BY_ID = Object.fromEntries(CONSTRUCT_TYPES.map(c => [c.id, 
 // Skalaer hvor responseOptions er konkrete svarmuligheder, der kan vises direkte.
 // De øvrige (mc_single, mc_multi, rang, aaben, semantisk, kategorier) har
 // responseOptions som beskrivende placeholder - den studerende skal selv tilføje konkrete svarmuligheder før udsendelse.
-const REAL_OPTION_SCALES = new Set(['likert5', 'likert7', 'numerisk', 'frekvens_vag', 'frekvens_konkret', 'vigtighed', 'sandsynlighed']);
+const REAL_OPTION_SCALES = new Set(['likert5', 'likert7', 'numerisk', 'numerisk10', 'frekvens_vag', 'frekvens_konkret', 'vigtighed', 'sandsynlighed']);
+
+// Skalaer med udsagn, hvor flere udsagn om samme emne kan samles i et indeks (niveau 2)
+const STATEMENT_SCALES = new Set(['likert5', 'likert7', 'vigtighed', 'sandsynlighed']);
+
+// Skalaer, hvor den studerende selv skriver svarmuligheder, enhed eller endepunkter
+const CUSTOM_OPTION_HELP = {
+  mc_single: { label: 'Svarmuligheder (én pr. linje)', placeholder: 'Sort\nHvid\nSand' },
+  mc_multi: { label: 'Svarmuligheder (én pr. linje)', placeholder: 'Instagram\nFacebook\nTikTok' },
+  rang: { label: 'Elementer, der skal rangordnes (én pr. linje)', placeholder: 'Pris\nLyd\nDesign' },
+  kategorier: { label: 'Kategorier (én pr. linje)', placeholder: '20-29 år\n30-39 år\n40-55 år' },
+  semantisk: { label: 'Ordpar (venstre … højre)', placeholder: 'Billig … Dyr' },
+  talsvar: { label: 'Enhed og evt. spænd', placeholder: 'År (20–55)' },
+  numerisk: { label: 'Hvad betyder endepunkterne?', placeholder: '0 = Meget usandsynligt … 10 = Meget sandsynligt' },
+  numerisk10: { label: 'Hvad betyder endepunkterne?', placeholder: '1 = Meget utilfreds … 10 = Meget tilfreds' },
+};
+const LIST_OPTION_SCALES = new Set(['mc_single', 'mc_multi', 'rang', 'kategorier']);
+
+const listOptions = text => (text || '').split('\n').map(o => o.trim()).filter(Boolean);
+
+// Variabelnavn til kodebogen: små bogstaver, understreg i stedet for mellemrum
+const slugify = name => (name || '').toLowerCase().trim()
+  .replace(/[^a-z0-9æøå]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 30) || 'variabel';
+
+// Alle spørgsmål (udsagn) for ét emne: hovedspørgsmålet + evt. ekstra udsagn til et indeks
+function itemsOf(construct, scaleChoices, questions) {
+  const q = questions[construct.id] || {};
+  const base = construct.varName || slugify(construct.name);
+  const scaleId = scaleChoices[construct.id]?.scaleId;
+  const extra = STATEMENT_SCALES.has(scaleId) ? (q.extraItems || []) : [];
+  const items = [{ text: q.text || '', reversed: !!q.reversed, varName: extra.length ? (q.varName || `${base}_1`) : base }];
+  extra.forEach((it, k) => items.push({ text: it.text || '', reversed: !!it.reversed, varName: it.varName || `${base}_${k + 2}` }));
+  return items;
+}
+
+// Spørgsmålsnumre i skemaet: { emne-id: [numre] } - et emne med indeks fylder flere numre
+function questionNumbers(constructs, scaleChoices, questions) {
+  let n = 0;
+  const out = {};
+  constructs.forEach(c => { out[c.id] = itemsOf(c, scaleChoices, questions).map(() => ++n); });
+  return out;
+}
+
+const numRange = nums => {
+  if (!nums.length) return '';
+  const sorted = [...nums].sort((a, b) => a - b);
+  const contiguous = sorted.every((v, i) => i === 0 || v === sorted[i - 1] + 1);
+  return contiguous && sorted.length > 1 ? `${sorted[0]}–${sorted[sorted.length - 1]}` : sorted.join(', ');
+};
+
+// Tekst om springlogik/screening, som den står i udkast og kodebog
+function routingNotes(c, constructs, numbers) {
+  const notes = [];
+  if (c.isScreening) notes.push(`screening: ${c.screeningRule?.trim() || 'uden for målgruppen'} → skemaet slutter`);
+  const src = c.filter && constructs.find(x => x.id === c.filter.sourceId);
+  if (src) notes.push(`kun hvis «${c.filter.answer || 'Ja'}» til ${numbers[src.id]?.[0]}`);
+  const deps = constructs.filter(x => x.filter?.sourceId === c.id);
+  if (deps.length) {
+    const answer = deps[0].filter.answer || 'Ja';
+    notes.push(`filter: kun «${answer}» får spørgsmål ${numRange(deps.flatMap(d => numbers[d.id] || []))}`);
+  }
+  return notes;
+}
+
+// Svarmuligheder, som de vises for respondenten (null = skriv selv / ikke angivet)
+function displayOptions(scale, q) {
+  if (!scale) return null;
+  if (LIST_OPTION_SCALES.has(scale.id)) { const o = listOptions(q?.options); return o.length ? o : null; }
+  if (REAL_OPTION_SCALES.has(scale.id)) return scale.responseOptions;
+  return null;
+}
+
+// "Koder" i kodebogen
+function codesText(scale, q) {
+  if (!scale) return '';
+  const custom = (q?.options || '').trim();
+  if (LIST_OPTION_SCALES.has(scale.id)) return listOptions(custom).join(' · ') || '(svarmuligheder mangler)';
+  if (['talsvar', 'semantisk', 'numerisk', 'numerisk10'].includes(scale.id) && custom) return custom.replace(/\n/g, ' ');
+  if (scale.id === 'aaben') return 'Fri tekst';
+  const opts = scale.responseOptions;
+  const labelled = opts.filter(o => /^\d+ /.test(o)).map(o => o.replace(/^(\d+) /, '$1 = '));
+  const extra = opts.filter(o => !/^\d/.test(o));
+  if (labelled.length) return [`${labelled[0]} … ${labelled[labelled.length - 1]}`, ...extra].join(' · ');
+  return `${opts[0]} … ${opts[opts.length - 1]}`;
+}
+
+// Kodebog med samme kolonner som kodebogen på statistiksiden
+const CODEBOOK_HEAD = ['Variabel', 'Spørgsmål', 'Måleniveau', 'Koder', 'Manglende'];
+function buildCodebook(constructs, scaleChoices, questions) {
+  const numbers = questionNumbers(constructs, scaleChoices, questions);
+  const rows = [['id', 'Respondentens løbenummer', 'Nominal (id)', 'Heltal', '—']];
+  constructs.forEach(c => {
+    const scale = SCALE_BY_ID[scaleChoices[c.id]?.scaleId];
+    const q = questions[c.id] || {};
+    const notes = routingNotes(c, constructs, numbers);
+    const level = scale ? (scale.codebookLevel || scale.measurement.charAt(0).toUpperCase() + scale.measurement.slice(1)) : '?';
+    const codes = codesText(scale, q);
+    const opts = scale ? (displayOptions(scale, q) || []) : [];
+    const missing = c.filter ? 'Tom = ikke relevant (springlogik)'
+      : opts.some(o => /ved ikke/i.test(o)) ? '99 = Ved ikke → tom' : 'Tom';
+    itemsOf(c, scaleChoices, questions).forEach((it, k) => {
+      const statement = STATEMENT_SCALES.has(scale?.id);
+      let text = `${numbers[c.id][k]}. ${statement ? `“${it.text}”` : it.text}`;
+      if (it.reversed) text += ' (negativt formuleret)';
+      if (notes.length && k === 0) text += ` (${notes.join('; ')})`;
+      rows.push([it.varName, text, level, codes, missing]);
+    });
+  });
+  return rows;
+}
 
 // ============================================================================
 // RULE-BASED FORMULATION CHECKS
@@ -445,7 +597,9 @@ async function evaluateOrderWithAI(constructs, scaleChoices, questions, topic) {
     const q = questions[c.id]?.text ?? '(ikke formuleret)';
     const ctype = CONSTRUCT_TYPE_BY_ID[c.type].label;
     const screeningTag = c.isScreening ? ' [SCREENING]' : '';
-    return `${i + 1}. [${ctype}]${screeningTag} ${c.name} (${scale?.label ?? '?'}) — "${q}"`;
+    const srcIdx = c.filter ? constructs.findIndex(x => x.id === c.filter.sourceId) : -1;
+    const filterTag = srcIdx >= 0 ? ` [KUN HVIS «${c.filter.answer}» TIL NR. ${srcIdx + 1}]` : '';
+    return `${i + 1}. [${ctype}]${screeningTag}${filterTag} ${c.name} (${scale?.label ?? '?'}) — "${q}"`;
   }).join('\n');
 
   const hasScreening = constructs.some(c => c.isScreening);
@@ -465,6 +619,7 @@ ${numbered}
 PRINCIPPER FOR GOD RÆKKEFØLGE:
 - SCREENINGSSPØRGSMÅL (markeret med [SCREENING]) skal placeres ALLERFØRST, før alt andet. De filtrerer hvem der må svare videre - og det skal afgøres øjeblikkeligt, ellers spilder respondenten tid på et skema der alligevel kasseres. Dette gælder OGSÅ hvis screeningsspørgsmålet er demografisk (fx alders-screening når målgruppen er afgrænset). Screening trumfer demografi-til-sidst-reglen.
 - Hvis der er FLERE screeningsspørgsmål: placér dem alle først, i den mest naturlige rækkefølge (typisk hårdest filter først).
+- SPRINGLOGIK (markeret [KUN HVIS … TIL NR. X]) er IKKE screening: De, der ikke får spørgsmålet, fortsætter i skemaet. Spørgsmålet, der styrer springet, skal stå FØR de spørgsmål, der afhænger af det, og de afhængige spørgsmål bør stå samlet lige efter det. Filterspørgsmålet skal IKKE flyttes allerførst.
 - Generelle/lette spørgsmål før specifikke/svære (engagement-opbygning) - efter eventuelle screeningsspørgsmål.
 - Funnel-princip: bredt før specifikt.
 - Adfærd før holdning om samme emne (så holdninger ikke farver adfærdsrapportering).
@@ -630,7 +785,7 @@ function NavButtons({ onBack, onNext, nextLabel = 'Næste', nextDisabled, backDi
 // TRIN 1: FORSKNINGSEMNE
 // ============================================================================
 
-function TopicStep({ topic, setTopic, onNext }) {
+function TopicStep({ topic, setTopic, onNext, onLoadExample }) {
   const canProceed = topic.research_question.trim().length > 15 && topic.purpose.trim().length > 15;
   return (
     <div>
@@ -639,6 +794,18 @@ function TopicStep({ topic, setTopic, onNext }) {
         title="Formål og forskningsspørgsmål"
         subtitle="Start ved formålet — den praktiske beslutning eller ledelsesønske, der har udløst undersøgelsen. Derfra udledes forskningsspørgsmålet, som spørgeskemaet skal kunne besvare. Når kæden er rigtig fra start, falder emner og skalaer naturligt på plads."
       />
+
+      <div className="mb-10 p-5 flex flex-wrap items-center gap-4" style={{ backgroundColor: 'var(--paper-warm)', border: '1px dashed var(--rule)' }}>
+        <div className="flex-1" style={{ minWidth: '240px' }}>
+          <p className="text-sm" style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, color: 'var(--ink)' }}>Se et færdigt eksempel: SonicWave</p>
+          <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
+            Højttalerproducenten SonicWave er casen i databehandlingen. Eksemplet viser alle seks trin med screening, springlogik og kodebog — præcis det skema, datasættet på statistiksiden kommer fra.
+          </p>
+        </div>
+        <button onClick={onLoadExample} className="px-4 py-2 text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--ink)', backgroundColor: 'transparent' }}>
+          Indlæs eksempel: SonicWave
+        </button>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-8">
@@ -763,7 +930,9 @@ function ConstructsStep({ topic, constructs, setConstructs, onBack, onNext }) {
       return updated;
     }));
   };
-  const removeConstruct = id => setConstructs(constructs.filter(c => c.id !== id));
+  // Fjernes et emne, fjernes også springlogik, der peger på det
+  const removeConstruct = id => setConstructs(constructs.filter(c => c.id !== id)
+    .map(c => c.filter?.sourceId === id ? { ...c, filter: null } : c));
 
   const allValid = constructs.length >= 1 && constructs.every(c => c.name.trim().length > 2 && c.definition.trim().length > 10);
 
@@ -778,6 +947,7 @@ function ConstructsStep({ topic, constructs, setConstructs, onBack, onNext }) {
       <div className="space-y-5">
         {constructs.map((construct, idx) => {
           const canEvaluate = construct.name.trim().length > 2 && construct.definition.trim().length > 10;
+          const filterSources = constructs.slice(0, idx).filter(c => !c.filter);
           return (
           <div key={construct.id} className="p-6" style={{ backgroundColor: 'var(--paper-warm)', border: '1px solid var(--rule)' }}>
             <div className="flex items-baseline justify-between mb-5">
@@ -879,10 +1049,84 @@ Hold dig på emne-niveau: skalavalg og svarmuligheder kommer på de næste trin.
                     }}
                   />
                   <span className="text-xs" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-                    Markér hvis spørgsmålet bestemmer om respondenten passer til målgruppen — fx alder (når målgruppen er afgrænset), om de har købt produktet, eller om de er kunder. Screeningsspørgsmål placeres altid <em style={{ fontFamily: 'Fraunces, serif' }}>først</em> i skemaet, også selvom de er demografiske.
+                    Markér hvis svaret afgør, om personen overhovedet hører til målgruppen — fx alder, når målgruppen er 20-55 år. Passer svaret ikke, <em style={{ fontFamily: 'Fraunces, serif' }}>slutter</em> skemaet, og personen er ikke med i datasættet. Screeningsspørgsmål placeres altid <em style={{ fontFamily: 'Fraunces, serif' }}>først</em> i skemaet, også selvom de er demografiske.
                   </span>
                 </label>
+                {construct.isScreening && (
+                  <input
+                    type="text"
+                    value={construct.screeningRule || ''}
+                    onChange={e => updateConstruct(construct.id, { screeningRule: e.target.value })}
+                    placeholder="Hvem slutter skemaet? Fx: under 20 eller over 55"
+                    aria-label="Hvem slutter skemaet ved screeningen"
+                    className="w-full mt-3 px-3 py-2 text-sm focus:outline-none"
+                    style={{ fontFamily: 'IBM Plex Sans, sans-serif', backgroundColor: 'var(--paper-warm)', border: '1px solid var(--rule)', color: 'var(--ink)' }}
+                  />
+                )}
               </div>
+            </div>
+
+            {(filterSources.length > 0 || construct.filter) && (
+              <div className="mt-5">
+                <label className="block text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
+                  Springlogik — stilles kun til nogle
+                </label>
+                <div className="p-3" style={{ backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!!construct.filter}
+                      onChange={e => updateConstruct(construct.id, {
+                        filter: e.target.checked ? { sourceId: filterSources[filterSources.length - 1].id, answer: 'Ja' } : null,
+                      })}
+                      style={{ marginTop: '3px', accentColor: 'var(--accent)', width: '16px', height: '16px', cursor: 'pointer', flexShrink: 0 }}
+                    />
+                    <span className="text-xs" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
+                      Markér hvis spørgsmålet kun skal stilles til dem, der har svaret noget bestemt på et tidligere spørgsmål — fx produktspørgsmål kun til dem, der ejer produktet. Til forskel fra screening <em style={{ fontFamily: 'Fraunces, serif' }}>fortsætter</em> de andre i skemaet. Deres tomme svar betyder "ikke relevant" — ikke manglende svar.
+                    </span>
+                  </label>
+                  {construct.filter && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)' }}>
+                      <span>Kun hvis svaret er</span>
+                      <input
+                        type="text"
+                        value={construct.filter.answer}
+                        onChange={e => updateConstruct(construct.id, { filter: { ...construct.filter, answer: e.target.value } })}
+                        aria-label="Svar, der giver adgang til spørgsmålet"
+                        className="px-2 py-1 text-sm focus:outline-none"
+                        style={{ width: '7rem', backgroundColor: 'var(--paper-warm)', border: '1px solid var(--rule)', color: 'var(--ink)' }}
+                      />
+                      <span>på</span>
+                      <select
+                        value={construct.filter.sourceId}
+                        onChange={e => updateConstruct(construct.id, { filter: { ...construct.filter, sourceId: Number(e.target.value) } })}
+                        aria-label="Spørgsmål, der styrer springlogikken"
+                        className="px-2 py-1 text-sm focus:outline-none"
+                        style={{ backgroundColor: 'var(--paper-warm)', border: '1px solid var(--rule)', color: 'var(--ink)', maxWidth: '100%' }}
+                      >
+                        {(filterSources.some(c => c.id === construct.filter.sourceId) ? filterSources
+                          : [...filterSources, constructs.find(c => c.id === construct.filter.sourceId)].filter(Boolean)).map(c => (
+                          <option key={c.id} value={c.id}>{c.name || '(unavngivet emne)'}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-5">
+              <label className="block text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
+                Variabelnavn i kodebogen (valgfrit)
+              </label>
+              <input
+                type="text"
+                value={construct.varName || ''}
+                onChange={e => updateConstruct(construct.id, { varName: e.target.value.replace(/\s+/g, '_') })}
+                placeholder={slugify(construct.name)}
+                className="w-full px-3 py-2 text-sm focus:outline-none"
+                style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)', color: 'var(--ink)' }}
+              />
             </div>
 
             <div className="mt-4 flex items-center gap-3">
@@ -968,7 +1212,7 @@ function ScalesStep({ topic, constructs, scaleChoices, setScaleChoices, onBack, 
       <StepHeader
         number={3}
         title="Hvilken skala passer til hvert emne?"
-        subtitle="Valg af svarskala bestemmer både hvad respondenten kan udtrykke - og hvilke statistiske analyser du kan lave bagefter. En holdning måles ikke med en frekvensskala. En adfærd måles ikke med en Likert-skala. Match emnets natur til skalaens måleniveau."
+        subtitle="Valg af svarskala bestemmer både hvad respondenten kan udtrykke - og hvilke statistiske analyser du kan lave bagefter. I databehandlingen skal du kunne bruge Chi², t-test og ANOVA, så hvert skalakort viser, hvilken af dem svarene kan bruges i. Match emnets natur til skalaens måleniveau."
       />
 
       <div className="space-y-8">
@@ -1103,8 +1347,11 @@ function ScaleCard({ scale, chosen, onClick, recommended }) {
         </span>
         {chosen && <span className="text-xs" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>Valgt</span>}
       </div>
-      <p className="text-xs mb-2" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+      <p className="text-xs mb-1" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
         Måleniveau: {scale.measurement}
+      </p>
+      <p className="text-xs mb-2" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+        Analyse: {scale.analysis}
       </p>
       <p className="text-sm mb-3" style={{ color: 'var(--ink)', fontFamily: 'IBM Plex Sans, sans-serif', lineHeight: 1.5 }}>
         {scale.description}
@@ -1121,39 +1368,49 @@ function ScaleCard({ scale, chosen, onClick, recommended }) {
 // ============================================================================
 
 function QuestionsStep({ topic, constructs, scaleChoices, questions, setQuestions, onBack, onNext }) {
-  const setQuestionForConstruct = (constructId, value) => {
-    setQuestions({ ...questions, [constructId]: { ...questions[constructId], text: value, evaluation: null } });
+  // Funktionelle opdateringer, så samtidige ændringer (fx AI-svar) ikke overskriver hinanden
+  const patchQuestion = (constructId, patch) => {
+    setQuestions(prev => ({ ...prev, [constructId]: { ...prev[constructId], ...patch } }));
   };
-  const setEvaluation = (constructId, evaluation) => {
-    setQuestions({ ...questions, [constructId]: { ...questions[constructId], evaluation } });
-  };
-  const setLoading = (constructId, loading) => {
-    setQuestions({ ...questions, [constructId]: { ...questions[constructId], loading } });
-  };
+  const setQuestionForConstruct = (constructId, value) => patchQuestion(constructId, { text: value, evaluation: null });
+  const setExtraItems = (constructId, items) => patchQuestion(constructId, { extraItems: items });
 
   const allFormulated = constructs.every(c => questions[c.id]?.text?.trim().length > 5);
+  const numbers = questionNumbers(constructs, scaleChoices, questions);
 
   return (
     <div>
       <StepHeader
         number={4}
         title="Formulér spørgsmålene"
-        subtitle="Nu kobles emne og skala til konkret formulering. Skriv ét spørgsmål per emne - hold dig til netop det, emnet skal måle. Brug 'Få AI-feedback' for grundig vurdering, eller stol på de automatiske advarsler."
+        subtitle="Nu kobles emne og skala til konkret formulering. Skriv ét spørgsmål per emne - hold dig til netop det, emnet skal måle. Skriv også svarmulighederne, hvor skalaen kræver det: Det er dem, der bliver til koder i kodebogen. Brug 'Få AI-feedback' for grundig vurdering, eller stol på de automatiske advarsler."
       />
 
       <div className="space-y-8">
         {constructs.map(construct => {
           const choice = scaleChoices[construct.id];
-          const scale = SCALE_BY_ID[choice.scaleId];
+          const scale = SCALE_BY_ID[choice?.scaleId];
+          if (!scale) {
+            return (
+              <div key={construct.id} className="p-4 text-sm" style={{ backgroundColor: 'var(--paper-warm)', borderLeft: '2px solid var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)' }}>
+                <strong>{construct.name || 'Et nyt emne'}</strong> mangler en skala. Gå tilbage til trin 3 og vælg en skala først.
+              </div>
+            );
+          }
           const q = questions[construct.id] ?? { text: '', evaluation: null, loading: false };
-          const ruleIssues = q.text.trim().length > 5 ? ruleBasedChecks(q.text) : [];
+          const text = q.text || '';
+          const ruleIssues = text.trim().length > 5 ? ruleBasedChecks(text) : [];
+          const customHelp = CUSTOM_OPTION_HELP[scale.id];
+          const isStatement = STATEMENT_SCALES.has(scale.id);
+          const extraItems = q.extraItems || [];
+          const shown = displayOptions(scale, q);
 
           return (
             <div key={construct.id} className="pb-8 border-b" style={{ borderColor: 'var(--rule)' }}>
               <div className="grid lg:grid-cols-3 gap-6 mb-4">
                 <div className="lg:col-span-2">
                   <h3 className="text-xl mb-1" style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, color: 'var(--ink)' }}>
-                    {construct.name}
+                    <span style={{ color: 'var(--accent)' }}>{numRange(numbers[construct.id])}.</span> {construct.name}
                   </h3>
                   <p className="text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
                     {CONSTRUCT_TYPE_BY_ID[construct.type].label} · {scale.label}
@@ -1164,14 +1421,15 @@ function QuestionsStep({ topic, constructs, scaleChoices, questions, setQuestion
                 </div>
                 <div className="text-xs p-3" style={{ backgroundColor: 'var(--paper-warm)', color: 'var(--ink)', fontFamily: 'IBM Plex Sans, sans-serif', lineHeight: 1.5 }}>
                   <span className="block uppercase tracking-wider mb-1" style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>Svarmuligheder</span>
-                  {scale.responseOptions.join(' · ')}
+                  {shown ? shown.join(' · ') : scale.responseOptions.join(' · ')}
                 </div>
               </div>
 
               <textarea
-                value={q.text}
+                value={text}
                 onChange={e => setQuestionForConstruct(construct.id, e.target.value)}
-                placeholder="Formulér dit spørgsmål her..."
+                placeholder={isStatement ? 'Formulér dit udsagn her...' : 'Formulér dit spørgsmål her...'}
+                aria-label={`Spørgsmål til ${construct.name}`}
                 rows={2}
                 className="w-full px-4 py-3 text-base focus:outline-none"
                 style={{
@@ -1182,6 +1440,29 @@ function QuestionsStep({ topic, constructs, scaleChoices, questions, setQuestion
                   lineHeight: 1.5,
                 }}
               />
+
+              {isStatement && (
+                <label className="mt-2 flex items-center gap-2 text-xs cursor-pointer" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)' }}>
+                  <input type="checkbox" checked={!!q.reversed} onChange={e => patchQuestion(construct.id, { reversed: e.target.checked })} style={{ accentColor: 'var(--accent)' }} />
+                  Negativt formuleret (enig er dårligt) — markeres i kodebogen
+                </label>
+              )}
+
+              {customHelp && (
+                <div className="mt-4">
+                  <label className="block text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
+                    {customHelp.label}
+                  </label>
+                  <textarea
+                    value={q.options || ''}
+                    onChange={e => patchQuestion(construct.id, { options: e.target.value })}
+                    placeholder={customHelp.placeholder}
+                    rows={LIST_OPTION_SCALES.has(scale.id) ? 4 : 1}
+                    className="w-full px-3 py-2 text-sm focus:outline-none"
+                    style={{ fontFamily: 'IBM Plex Sans, sans-serif', backgroundColor: 'transparent', border: '1px solid var(--rule)', color: 'var(--ink)', lineHeight: 1.5 }}
+                  />
+                </div>
+              )}
 
               {ruleIssues.length > 0 && (
                 <div className="mt-3 space-y-1.5">
@@ -1196,14 +1477,52 @@ function QuestionsStep({ topic, constructs, scaleChoices, questions, setQuestion
                 </div>
               )}
 
+              {isStatement && (
+                <details className="mt-5 niveau2" open={extraItems.length > 0}>
+                  <summary className="text-sm cursor-pointer flex items-center gap-3 flex-wrap" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)' }}>
+                    <span className="text-xs uppercase px-2 py-0.5" style={{ letterSpacing: '0.15em', fontWeight: 600, color: 'var(--paper)', backgroundColor: 'var(--ink)' }}>Niveau 2</span>
+                    <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 500 }}>Flere udsagn om samme emne (indeks)</span>
+                    <span className="text-xs" style={{ color: 'var(--ink-soft)' }}>valgfrit</span>
+                  </summary>
+                  <div className="mt-3 pl-4" style={{ borderLeft: '1px dashed var(--rule)' }}>
+                    <p className="text-xs mb-3" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+                      Et emne kan måles med flere udsagn, som senere lægges sammen til et indeks. Bland gerne positive og negative udsagn — de negative skal så vendes (6 − svar), før de lægges sammen. Hvert udsagn bliver sit eget spørgsmål i skemaet og sin egen variabel i kodebogen.
+                    </p>
+                    {extraItems.map((it, k) => (
+                      <div key={k} className="mb-3">
+                        <div className="flex items-start gap-2">
+                          <textarea
+                            value={it.text}
+                            onChange={e => setExtraItems(construct.id, extraItems.map((x, j) => j === k ? { ...x, text: e.target.value } : x))}
+                            placeholder={`Udsagn ${k + 2}`}
+                            aria-label={`Udsagn ${k + 2} til ${construct.name}`}
+                            rows={1}
+                            className="flex-1 px-3 py-2 text-sm focus:outline-none"
+                            style={{ fontFamily: 'Fraunces, serif', backgroundColor: 'transparent', border: '1px solid var(--rule)', color: 'var(--ink)' }}
+                          />
+                          <button onClick={() => setExtraItems(construct.id, extraItems.filter((_, j) => j !== k))} className="text-xs px-2 py-2" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif' }}>Fjern</button>
+                        </div>
+                        <label className="mt-1 flex items-center gap-2 text-xs cursor-pointer" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)' }}>
+                          <input type="checkbox" checked={!!it.reversed} onChange={e => setExtraItems(construct.id, extraItems.map((x, j) => j === k ? { ...x, reversed: e.target.checked } : x))} style={{ accentColor: 'var(--accent)' }} />
+                          Negativt formuleret
+                        </label>
+                      </div>
+                    ))}
+                    <button onClick={() => setExtraItems(construct.id, [...extraItems, { text: '', reversed: false }])} className="text-xs px-3 py-1.5" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--accent)', border: '1px dashed var(--rule)' }}>
+                      + Tilføj udsagn
+                    </button>
+                  </div>
+                </details>
+              )}
+
               <div className="mt-4 flex items-center gap-3">
                 <button
                   onClick={async () => {
-                    setLoading(construct.id, true);
-                    const result = await evaluateWithAI(q.text, construct, scale, topic);
-                    setQuestions(prev => ({ ...prev, [construct.id]: { ...prev[construct.id], evaluation: result, loading: false } }));
+                    patchQuestion(construct.id, { loading: true });
+                    const result = await evaluateWithAI(text, construct, scale, topic);
+                    patchQuestion(construct.id, { evaluation: result, loading: false });
                   }}
-                  disabled={!q.text || q.loading}
+                  disabled={!text || q.loading}
                   className="text-xs px-4 py-2 transition-all disabled:opacity-30"
                   style={{
                     fontFamily: 'IBM Plex Sans, sans-serif',
@@ -1491,6 +1810,7 @@ function OrderStep({ topic, constructs, setConstructs, scaleChoices, questions, 
             </h3>
             <ul className="space-y-3 text-sm" style={{ color: 'var(--ink)', fontFamily: 'IBM Plex Sans, sans-serif', lineHeight: 1.55 }}>
               <li><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Screening allerførst</span> — filtrerings-spørgsmål skal afgøres med det samme, selv hvis de er demografiske.</li>
+              <li><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Springlogik</span> — filterspørgsmålet står før de spørgsmål, det styrer, og de står samlet lige efter.</li>
               <li><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Engagement først</span> — generelle, lette spørgsmål før specifikke og svære.</li>
               <li><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Funnel</span> — bredt før smalt, overordnet før detalje.</li>
               <li><span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}>Adfærd før holdning</span> om samme tema — ellers risikerer du at holdningen farver adfærdsrapporteringen.</li>
@@ -1511,6 +1831,7 @@ function OrderStep({ topic, constructs, setConstructs, scaleChoices, questions, 
           const scale = SCALE_BY_ID[scaleChoices[c.id]?.scaleId];
           const q = questions[c.id]?.text ?? '(ikke formuleret)';
           const ctype = CONSTRUCT_TYPE_BY_ID[c.type].label;
+          const srcIdx = c.filter ? constructs.findIndex(x => x.id === c.filter.sourceId) : -1;
           return (
             <div key={c.id} className="flex items-start gap-5 p-5" style={{ backgroundColor: 'var(--paper-warm)', border: '1px solid var(--rule)' }}>
               <span className="text-2xl pt-1" style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, color: 'var(--accent)', minWidth: '2rem' }}>
@@ -1524,7 +1845,17 @@ function OrderStep({ topic, constructs, setConstructs, scaleChoices, questions, 
                       SCREENING
                     </span>
                   )}
+                  {c.filter && srcIdx >= 0 && (
+                    <span className="px-1.5 py-0.5" style={{ color: 'var(--ink)', fontWeight: 600, letterSpacing: '0.05em', border: '1px dashed var(--ink-soft)' }}>
+                      KUN HVIS «{c.filter.answer}» TIL {String(srcIdx + 1).padStart(2, '0')}
+                    </span>
+                  )}
                 </p>
+                {c.filter && srcIdx > idx && (
+                  <p className="text-xs mb-1" style={{ color: '#a14242', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                    ⚠ Spørgsmålet, der styrer springlogikken, står efter dette spørgsmål. Flyt det op.
+                  </p>
+                )}
                 <p className="text-base" style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)', lineHeight: 1.5 }}>
                   {q}
                 </p>
@@ -1602,6 +1933,31 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
   const [copied, setCopied] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
 
+  const numbers = questionNumbers(constructs, scaleChoices, questions);
+  const codebook = buildCodebook(constructs, scaleChoices, questions);
+  // Ét element pr. spørgsmål i skemaet (et emne med indeks giver flere)
+  const flatItems = constructs.flatMap(c => {
+    const scale = SCALE_BY_ID[scaleChoices[c.id]?.scaleId];
+    const q = questions[c.id] || {};
+    const notes = routingNotes(c, constructs, numbers);
+    return itemsOf(c, scaleChoices, questions).map((it, k) => ({
+      c, scale, q, item: it, num: numbers[c.id][k], notes: k === 0 ? notes : [],
+    }));
+  });
+  // Tekstlinjer for svarmulighederne - bruges i .txt-eksporten
+  const optionLines = (scale, q) => {
+    if (!scale) return [];
+    const custom = (q.options || '').trim();
+    if (scale.id === 'aaben') return ['_'.repeat(50), '_'.repeat(50)];
+    if (scale.id === 'talsvar') return [`_______ ${custom}`.trim()];
+    if (scale.id === 'semantisk') return [custom ? custom.replace('…', '— — — — — — —') : '[Specificér to modsatrettede ord med skala imellem, fx: Billig — — — — — — — Dyr]'];
+    const opts = displayOptions(scale, q);
+    const mark = scale.id === 'mc_multi' ? '[ ]' : '( )';
+    const lines = opts ? opts.map(o => `${mark}  ${o}`) : [`[Tilføj konkrete svarmuligheder før udsendelse — ${(scale.responseOptions[0] || '').toLowerCase()}]`];
+    if ((scale.id === 'numerisk' || scale.id === 'numerisk10') && custom) lines.push(`(${custom})`);
+    return lines;
+  };
+
   const buildExportText = () => {
     const bar = '='.repeat(60);
     const thin = '-'.repeat(60);
@@ -1619,42 +1975,32 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
       const justification = scaleChoices[c.id]?.justification || '';
       const screeningTag = c.isScreening ? ' [SCREENING]' : '';
       const ctype = CONSTRUCT_TYPE_BY_ID[c.type].label;
+      const notes = routingNotes(c, constructs, numbers);
       out += `${idx + 1}. ${c.name}${screeningTag} · ${ctype}\n`;
       out += `   Operationalisering: ${c.definition}\n`;
       out += `   Skala: ${scale?.label ?? '?'} (${scale?.measurement ?? '?'})\n`;
+      if (scale?.analysis) out += `   Analyse: ${scale.analysis}\n`;
+      if (notes.length) out += `   Rute: ${notes.join('; ')}\n`;
       if (justification) out += `   Begrundelse: ${justification}\n`;
       out += `\n`;
     });
 
     // === SEKTION 2: SPØRGESKEMA ===
     out += `\n${bar}\nSPØRGESKEMA — KLAR TIL PILOTTEST\n${bar}\n\n`;
-    constructs.forEach((c, idx) => {
-      const scale = SCALE_BY_ID[scaleChoices[c.id]?.scaleId];
-      const q = questions[c.id]?.text ?? '(ikke formuleret)';
-      const screeningTag = c.isScreening ? ' [SCREENING]' : '';
-      out += `${idx + 1}.${screeningTag} ${q}\n\n`;
-
-      if (scale) {
-        if (scale.id === 'aaben') {
-          out += `   ${'_'.repeat(50)}\n`;
-          out += `   ${'_'.repeat(50)}\n`;
-        } else if (scale.id === 'semantisk') {
-          out += `   [Specificér to modsatrettede ord med skala imellem, fx: Billig — — — — — — — Dyr]\n`;
-        } else if (REAL_OPTION_SCALES.has(scale.id)) {
-          const marker = '( )';
-          scale.responseOptions.forEach(opt => {
-            out += `   ${marker}  ${opt}\n`;
-          });
-        } else {
-          // mc_single, mc_multi, rang, kategorier - placeholders
-          const note = scale.responseOptions[0] || '';
-          out += `   [Tilføj konkrete svarmuligheder før udsendelse — ${note.toLowerCase()}]\n`;
-        }
-      }
+    flatItems.forEach(({ scale, q, item, num, notes, c }) => {
+      const screeningTag = c.isScreening && notes.length ? ' [SCREENING]' : '';
+      out += `${num}.${screeningTag} ${item.text || '(ikke formuleret)'}\n`;
+      if (notes.length) out += `   (${notes.join('; ')})\n`;
+      out += `\n`;
+      optionLines(scale, q).forEach(line => { out += `   ${line}\n`; });
       out += `\n${thin}\n\n`;
     });
 
-    // === SEKTION 3: TJEKLISTE ===
+    // === SEKTION 3: KODEBOG ===
+    out += `\n${bar}\nKODEBOG\n${bar}\n\n`;
+    out += codebook.map(r => r.join(' | ')).join('\n') + '\n';
+
+    // === SEKTION 4: TJEKLISTE ===
     out += `\n${bar}\nTJEKLISTE FØR UDSENDELSE\n${bar}\n\n`;
     out += `[ ] Sprog: Spørgsmålene er målrettet respondenternes hverdagssprog, ikke akademisk eller branchejargon\n`;
     out += `[ ] Svartid: Estimeret gennemførelsestid er under 10 minutter\n`;
@@ -1682,13 +2028,15 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
           </p>
           <p class="design-def">${escape(c.definition)}</p>
           <p class="design-meta"><strong>Skala:</strong> ${escape(scale?.label || '')} <em>(${escape(scale?.measurement || '')})</em></p>
+          ${scale?.analysis ? `<p class="design-meta"><strong>Analyse:</strong> ${escape(scale.analysis)}</p>` : ''}
+          ${routingNotes(c, constructs, numbers).length ? `<p class="design-meta"><strong>Rute:</strong> ${escape(routingNotes(c, constructs, numbers).join('; '))}</p>` : ''}
           ${choice.justification ? `<p class="design-meta"><strong>Begrundelse:</strong> ${escape(choice.justification)}</p>` : ''}
         </div>
       `;
     }).join('');
 
-    // Vertical option rendering — mirrors buildExportText logic
-    const renderOptionsHtml = (scale) => {
+    // Svarmuligheder - samme logik som optionLines i .txt-eksporten
+    const renderOptionsHtml = (scale, q) => {
       if (!scale) return '';
       if (scale.id === 'aaben') {
         return `<div class="options">
@@ -1697,32 +2045,28 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
           <div class="text-line"></div>
         </div>`;
       }
-      if (scale.id === 'semantisk') {
-        return `<div class="options"><p class="opt-note">Specificér to modsatrettede ord med skala imellem, fx: Billig — — — — — — — Dyr</p></div>`;
-      }
-      if (REAL_OPTION_SCALES.has(scale.id)) {
-        return `<div class="options">${scale.responseOptions.map(opt =>
-          `<p class="opt-line"><span class="opt-mark">&#9675;</span> ${escape(opt)}</p>`
-        ).join('')}</div>`;
-      }
-      // mc_single, mc_multi, rang, kategorier — placeholder
-      const note = scale.responseOptions[0] || '';
-      return `<div class="options"><p class="opt-note">[Tilføj konkrete svarmuligheder før udsendelse — ${escape(note.toLowerCase())}]</p></div>`;
+      const lines = optionLines(scale, q);
+      const isChoice = displayOptions(scale, q);
+      return `<div class="options">${lines.map(l => isChoice && /^(\(\)|\[ \])/.test(l)
+        ? `<p class="opt-line"><span class="opt-mark">${scale.id === 'mc_multi' ? '&#9744;' : '&#9675;'}</span> ${escape(l.replace(/^(\(\)|\[ \])\s+/, ''))}</p>`
+        : `<p class="opt-note">${escape(l)}</p>`).join('')}</div>`;
     };
 
-    const questionsHtml = constructs.map((c, idx) => {
-      const scale = SCALE_BY_ID[scaleChoices[c.id]?.scaleId];
-      const q = questions[c.id]?.text ?? '(ikke formuleret)';
-      const screeningBadge = c.isScreening
+    const questionsHtml = flatItems.map(({ c, scale, q, item, num, notes }) => {
+      const screeningBadge = c.isScreening && notes.length
         ? ` <span class="screening-badge">SCREENING</span>`
         : '';
       return `
         <div class="question-block">
-          <p class="question-text"><span class="q-num">${String(idx + 1).padStart(2, '0')}.</span> ${escape(q)}${screeningBadge}</p>
-          ${renderOptionsHtml(scale)}
+          <p class="question-text"><span class="q-num">${String(num).padStart(2, '0')}.</span> ${escape(item.text || '(ikke formuleret)')}${screeningBadge}</p>
+          ${notes.length ? `<p class="route-note">(${escape(notes.join('; '))})</p>` : ''}
+          ${renderOptionsHtml(scale, q)}
         </div>
       `;
     }).join('');
+
+    const codebookHtml = `<table class="codebook"><thead><tr>${CODEBOOK_HEAD.map(h => `<th>${escape(h)}</th>`).join('')}</tr></thead>
+      <tbody>${codebook.map(r => `<tr>${r.map((v, i) => `<td${i === 0 ? ' class="var"' : ''}>${escape(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 
     return `<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1766,6 +2110,11 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
   .opt-mark { color: #6b6557; font-size: 12pt; margin-right: 6pt; }
   .opt-note { font-family: Calibri, Helvetica, sans-serif; font-size: 9.5pt; color: #6b6557; font-style: italic; margin: 3pt 0; }
   .text-line { border-bottom: 0.5pt solid #6b6557; height: 14pt; margin: 4pt 0; }
+  .route-note { font-family: Calibri, Helvetica, sans-serif; font-size: 9.5pt; color: #7a2e3d; font-style: italic; margin: 0 0 6pt 22pt; }
+  .codebook { width: 100%; border-collapse: collapse; font-family: Calibri, Helvetica, sans-serif; font-size: 8.5pt; margin-top: 8pt; }
+  .codebook th, .codebook td { border: 0.5pt solid #d6cfc1; padding: 3pt 5pt; text-align: left; vertical-align: top; }
+  .codebook th { background: #efe9dc; text-transform: uppercase; letter-spacing: 0.08em; font-size: 7.5pt; }
+  .codebook td.var { font-family: Consolas, monospace; color: #7a2e3d; white-space: nowrap; }
 
   .checklist { margin-top: 24pt; padding-top: 14pt; border-top: 1pt solid #d6cfc1; page-break-inside: avoid; }
   .checklist ul { padding-left: 0; margin: 8pt 0; list-style: none; }
@@ -1807,6 +2156,11 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
   <p class="section-heading">Spørgeskema</p>
 
   ${questionsHtml}
+
+  <div class="divider-strong"></div>
+  <p class="section-heading">Kodebog</p>
+  <p class="subtitle">Samme kolonner som kodebogen i databehandlingen (statistiksiden). Tilføj selv afledte variable, fx aldersgruppe.</p>
+  ${codebookHtml}
 
   <div class="checklist">
     <p class="meta">Tjekliste før udsendelse</p>
@@ -1924,10 +2278,16 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
     }
   };
 
-  const renderQuestionnaireOptions = (scale) => {
-    if (!scale) return null;
+  const downloadCodebook = () => {
+    const csv = '\ufeff' + [CODEBOOK_HEAD, ...codebook].map(r => r.map(v => /[;"\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v).join(';')).join('\r\n') + '\r\n';
+    triggerDownload('kodebog.csv', csv, 'text/csv;charset=utf-8');
+  };
 
-    // Open-ended: render as text-input lines
+  const renderQuestionnaireOptions = (scale, q) => {
+    if (!scale) return null;
+    const custom = (q.options || '').trim();
+
+    // Åbent spørgsmål: linjer til fri tekst
     if (scale.id === 'aaben') {
       return (
         <div className="ml-10 mt-4 space-y-3">
@@ -1938,20 +2298,28 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
       );
     }
 
-    // Semantic differential: descriptive line
-    if (scale.id === 'semantisk') {
+    // Talsvar og semantisk differential: én linje
+    if (scale.id === 'talsvar' || scale.id === 'semantisk') {
       return (
         <div className="ml-10 mt-4 text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)' }}>
-          {scale.responseOptions[0]}
+          {optionLines(scale, q)[0]}
         </div>
       );
     }
 
+    const opts = displayOptions(scale, q);
+    if (!opts) {
+      return (
+        <div className="ml-10 mt-4 text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--accent)', fontStyle: 'italic' }}>
+          Svarmulighederne mangler — tilføj dem i trin 4.
+        </div>
+      );
+    }
     const isMulti = scale.id === 'mc_multi';
 
     return (
       <div className="ml-10 mt-4 space-y-2.5">
-        {scale.responseOptions.map((opt, i) => (
+        {opts.map((opt, i) => (
           <div key={i} className="flex items-center gap-3" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)', fontSize: '0.95rem', lineHeight: 1.4 }}>
             <span style={{
               display: 'inline-block',
@@ -1964,6 +2332,9 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
             <span>{opt}</span>
           </div>
         ))}
+        {(scale.id === 'numerisk' || scale.id === 'numerisk10') && custom && (
+          <div className="text-xs" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)' }}>({custom})</div>
+        )}
       </div>
     );
   };
@@ -2044,6 +2415,16 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
                       <p className="text-xs" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                         <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Skala: </span>{scale?.label} <span style={{ fontStyle: 'italic' }}>({scale?.measurement})</span>
                       </p>
+                      {scale?.analysis && (
+                        <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
+                          <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Analyse: </span>{scale.analysis}
+                        </p>
+                      )}
+                      {routingNotes(c, constructs, numbers).length > 0 && (
+                        <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
+                          <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Rute: </span>{routingNotes(c, constructs, numbers).join('; ')}
+                        </p>
+                      )}
                       {choice.justification && (
                         <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                           <span style={{ fontWeight: 600, color: 'var(--ink)' }}>Begrundelse: </span>{choice.justification}
@@ -2062,30 +2443,57 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
               </p>
 
               <div className="space-y-9">
-                {constructs.map((c, idx) => {
-                  const scale = SCALE_BY_ID[scaleChoices[c.id]?.scaleId];
-                  const q = questions[c.id]?.text ?? '(ikke formuleret)';
-                  return (
-                    <div key={c.id}>
-                      <div className="flex items-baseline gap-3 mb-1">
-                        <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: '1.05rem', color: 'var(--accent)', minWidth: '2rem' }}>
-                          {String(idx + 1).padStart(2, '0')}.
-                        </span>
-                        <div className="flex-1">
-                          <p style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)', fontSize: '1.05rem', lineHeight: 1.5 }}>
-                            {q}
+                {flatItems.map(({ c, scale, q, item, num, notes }) => (
+                  <div key={`${c.id}-${num}`}>
+                    <div className="flex items-baseline gap-3 mb-1">
+                      <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: '1.05rem', color: 'var(--accent)', minWidth: '2rem' }}>
+                        {String(num).padStart(2, '0')}.
+                      </span>
+                      <div className="flex-1">
+                        <p style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)', fontSize: '1.05rem', lineHeight: 1.5 }}>
+                          {item.text || '(ikke formuleret)'}
+                        </p>
+                        {notes.length > 0 && (
+                          <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--accent)', fontStyle: 'italic' }}>
+                            ({notes.join('; ')})
                           </p>
-                          {c.isScreening && (
-                            <span className="inline-block text-xs px-1.5 py-0.5 uppercase mt-2" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 600, letterSpacing: '0.05em', border: '1px solid var(--accent)' }}>
-                              Screening
-                            </span>
-                          )}
-                        </div>
+                        )}
+                        {c.isScreening && notes.length > 0 && (
+                          <span className="inline-block text-xs px-1.5 py-0.5 uppercase mt-2" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 600, letterSpacing: '0.05em', border: '1px solid var(--accent)' }}>
+                            Screening
+                          </span>
+                        )}
                       </div>
-                      {renderQuestionnaireOptions(scale)}
                     </div>
-                  );
-                })}
+                    {renderQuestionnaireOptions(scale, q)}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* KODEBOG */}
+            <div className="pt-8 mt-10" style={{ borderTop: '2px solid var(--ink)' }}>
+              <p className="text-xs uppercase tracking-[0.2em] mb-2" style={{ color: 'var(--accent)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 600 }}>
+                Kodebog
+              </p>
+              <p className="text-sm mb-4" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+                Sådan bliver svarene til data. Kolonnerne er de samme som i kodebogen på statistiksiden, du bruger i databehandlingen.
+              </p>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="w-full text-xs" style={{ borderCollapse: 'collapse', fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)' }}>
+                  <thead>
+                    <tr>{CODEBOOK_HEAD.map(h => (
+                      <th key={h} className="text-left uppercase tracking-wider p-2" style={{ border: '1px solid var(--rule)', backgroundColor: 'var(--paper)', fontWeight: 600, color: 'var(--ink-soft)' }}>{h}</th>
+                    ))}</tr>
+                  </thead>
+                  <tbody>
+                    {codebook.map((r, i) => (
+                      <tr key={i}>{r.map((v, j) => (
+                        <td key={j} className="p-2 align-top" style={{ border: '1px solid var(--rule)', fontFamily: j === 0 ? 'ui-monospace, Menlo, Consolas, monospace' : undefined, color: j === 0 ? 'var(--accent)' : j === 4 ? 'var(--ink-soft)' : 'var(--ink)', whiteSpace: j === 0 ? 'nowrap' : undefined }}>{v}</td>
+                      ))}</tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -2118,6 +2526,20 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
               }}
             >
               Download som PDF
+            </button>
+
+            <button
+              onClick={downloadCodebook}
+              className="w-full px-4 py-3 text-sm transition-all"
+              style={{
+                fontFamily: 'IBM Plex Sans, sans-serif',
+                fontWeight: 500,
+                color: 'var(--ink)',
+                backgroundColor: 'transparent',
+                border: '1px solid var(--ink)',
+              }}
+            >
+              Download kodebog (.csv)
             </button>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
@@ -2236,16 +2658,96 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
 }
 
 // ============================================================================
+// EKSEMPEL: SONICWAVE
+// Samme spørgsmål, rækkefølge, måleniveauer og koder som kodebogen på
+// statistiksiden (arma-dania/tests, § 01). Ændres det ene, skal det andet følge med.
+// ============================================================================
+
+function sonicWaveExample() {
+  const C = { alder: 1, farve: 2, ejer: 3, linje: 4, kanal: 5, ordre: 6, tilfreds: 7, holdning: 8, koen: 9 };
+  const filter = { sourceId: C.ejer, answer: 'Ja' };
+  const constructs = [
+    { id: C.alder, name: 'Alder', type: 'demografi', varName: 'alder', isScreening: true, screeningRule: 'under 20 eller over 55',
+      definition: 'Respondentens alder i hele år. Afgør, om personen er i målgruppen (20-55 år), og bruges til at danne aldersgrupper i analysen.' },
+    { id: C.farve, name: 'Foretrukken farve', type: 'holdning', varName: 'foretrukken_farve', isScreening: false,
+      definition: 'Hvilken af den nye models tre farver respondenten foretrækker til en højttaler.' },
+    { id: C.ejer, name: 'Ejer en SonicWave', type: 'adfaerd', varName: 'ejer_produkt', isScreening: false,
+      definition: 'Om respondenten ejer en SonicWave-højttaler i dag. Afgør, hvem der får spørgsmålene om køb og tilfredshed.' },
+    { id: C.linje, name: 'Produktlinje', type: 'adfaerd', varName: 'produktlinje', isScreening: false, filter,
+      definition: 'Hvilken af SonicWaves fire produktlinjer kunden ejer.' },
+    { id: C.kanal, name: 'Købskanal', type: 'adfaerd', varName: 'kanal', isScreening: false, filter,
+      definition: 'Den kanal, kunden købte sin SonicWave igennem.' },
+    { id: C.ordre, name: 'Ordreværdi', type: 'adfaerd', varName: 'ordreværdi', isScreening: false, filter,
+      definition: 'Det beløb i kroner, kunden betalte for sin SonicWave.' },
+    { id: C.tilfreds, name: 'Tilfredshed', type: 'holdning', varName: 'tilfredshed', isScreening: false, filter,
+      definition: 'Kundens samlede vurdering af sin SonicWave-højttaler.' },
+    { id: C.holdning, name: 'Holdning til SonicWave', type: 'holdning', varName: 'holdning', isScreening: false,
+      definition: 'Respondentens vurdering af SonicWave som brand: lydkvalitet og forholdet mellem pris og værdi.' },
+    { id: C.koen, name: 'Køn', type: 'demografi', varName: 'køn', isScreening: false,
+      definition: 'Respondentens køn. Bruges til at beskrive stikprøven.' },
+  ];
+  const scale = (scaleId, justification) => ({ scaleId, justification });
+  const scaleChoices = {
+    [C.alder]: scale('talsvar', 'Præcis alder kan bruges til screening og kan bagefter inddeles i aldersgrupper til Chi².'),
+    [C.farve]: scale('mc_single', 'Respondenten vælger én af tre farver - nominale data til en krydstabel og Chi².'),
+    [C.ejer]: scale('mc_single', 'Ja/nej-spørgsmål, der styrer springlogikken.'),
+    [C.linje]: scale('mc_single', 'Fire produktlinjer giver fire grupper, der kan sammenlignes med ANOVA.'),
+    [C.kanal]: scale('mc_single', 'Én købskanal pr. kunde - to kanaler kan sammenlignes med en t-test.'),
+    [C.ordre]: scale('talsvar', 'Beløb i kroner er ratiodata, så gennemsnit kan sammenlignes med t-test og ANOVA.'),
+    [C.tilfreds]: scale('numerisk10', 'Ti trin giver nok variation til at behandle tilfredshed som interval og bruge ANOVA.'),
+    [C.holdning]: scale('likert5', 'Påstande om brandet måles bedst som enighed; fordelingen kan testes med Chi².'),
+    [C.koen]: scale('mc_single', 'Nominal baggrundsvariabel med mulighed for ikke at oplyse.'),
+  };
+  const questions = {
+    [C.alder]: { text: 'Hvor gammel er du?', options: 'År (20–55)' },
+    [C.farve]: { text: 'SonicWaves nye model kommer i tre farver. Hvilken foretrækker du?', options: 'Sort\nHvid\nSand' },
+    [C.ejer]: { text: 'Ejer du en SonicWave-højttaler?', options: 'Ja\nNej' },
+    [C.linje]: { text: 'Hvilken produktlinje ejer du?', options: 'Classic\nPremium\nSport\nMini' },
+    [C.kanal]: { text: 'Hvor købte du din SonicWave?', options: 'Instagram\nFacebook\nGoogle\nTikTok\nButik' },
+    [C.ordre]: { text: 'Hvad betalte du for din SonicWave? (kr.)', options: 'Kroner' },
+    [C.tilfreds]: { text: 'Hvor tilfreds er du alt i alt med din SonicWave? (1–10)', options: '1 = Meget utilfreds … 10 = Meget tilfreds' },
+    [C.holdning]: { text: 'SonicWave har god lydkvalitet', varName: 'q1_lydkvalitet', extraItems: [
+      { text: 'SonicWave-højttalere er pengene værd', varName: 'q2_pengene_værd' },
+      { text: 'SonicWave er for dyr', reversed: true, varName: 'q3_for_dyr' },
+    ] },
+    [C.koen]: { text: 'Hvad er dit køn?', options: 'Kvinde\nMand\nVil ikke oplyse' },
+  };
+  return {
+    topic: {
+      purpose: 'SonicWave skal beslutte, hvilke farver den nye højttalermodel skal markedsføres i over for hvilke aldersgrupper, og hvilke salgskanaler og produktlinjer der skal prioriteres.',
+      research_question: 'Hænger foretrukken farve sammen med alder, og er der forskel på ordreværdi mellem købskanaler og på tilfredshed mellem produktlinjer?',
+      target_group: 'Danskere på 20-55 år',
+    },
+    constructs, scaleChoices, questions,
+  };
+}
+
+// ============================================================================
 // HOVEDKOMPONENT
 // ============================================================================
 
+const STORAGE_KEY = 'spoergeskemadesigner:v2';
+const emptyConstruct = () => ({ id: Date.now(), name: '', type: 'holdning', definition: '', isScreening: false });
+
+// Gemt arbejde fra browseren (uden midlertidige felter som "loading")
+function loadSaved() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    return d && d.topic && Array.isArray(d.constructs) ? d : null;
+  } catch (e) { return null; }
+}
+const stripLoading = obj => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, v && typeof v === 'object' ? { ...v, loading: false } : v]));
+
 export default function App() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [topic, setTopic] = useState({ research_question: '', purpose: '', target_group: '' });
-  const [constructs, setConstructs] = useState([{ id: Date.now(), name: '', type: 'holdning', definition: '', isScreening: false }]);
-  const [scaleChoices, setScaleChoices] = useState({});
-  const [questions, setQuestions] = useState({});
-  const [completedSteps, setCompletedSteps] = useState(new Set());
+  const [saved] = useState(loadSaved);
+  const [currentStep, setCurrentStep] = useState(saved?.currentStep ?? 0);
+  const [topic, setTopic] = useState(saved?.topic ?? { research_question: '', purpose: '', target_group: '' });
+  const [constructs, setConstructs] = useState(saved?.constructs?.map(c => ({ ...c, loading: false })) ?? [emptyConstruct()]);
+  const [scaleChoices, setScaleChoices] = useState(saved ? stripLoading(saved.scaleChoices || {}) : {});
+  const [questions, setQuestions] = useState(saved ? stripLoading(saved.questions || {}) : {});
+  const [completedSteps, setCompletedSteps] = useState(new Set(saved?.completedSteps ?? []));
 
   // Inject Google Fonts
   useEffect(() => {
@@ -2256,26 +2758,61 @@ export default function App() {
     return () => { try { document.head.removeChild(link); } catch (e) {} };
   }, []);
 
+  // Autogem: arbejdet overlever genindlæsning i samme browser
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        currentStep, topic, constructs, scaleChoices, questions, completedSteps: [...completedSteps],
+      }));
+    } catch (e) { /* fx privat vindue - siden virker stadig, men gemmer ikke */ }
+  }, [currentStep, topic, constructs, scaleChoices, questions, completedSteps]);
+
+  // Det første trin, der mangler noget. Man kan aldrig hoppe forbi det
+  // (fx når et nyt emne uden skala er tilføjet, efter at trin 3 var færdigt).
+  const firstIncompleteStep = () => {
+    if (topic.research_question.trim().length <= 15 || topic.purpose.trim().length <= 15) return 0;
+    if (!constructs.length || !constructs.every(c => c.name.trim().length > 2 && c.definition.trim().length > 10)) return 1;
+    if (!constructs.every(c => scaleChoices[c.id]?.scaleId)) return 2;
+    if (!constructs.every(c => questions[c.id]?.text?.trim().length > 5)) return 3;
+    return 5;
+  };
+  const reachable = Math.min(firstIncompleteStep(), 5);
+  const safeStep = Math.min(currentStep, reachable);
+  const effectiveCompleted = new Set([...completedSteps].filter(st => st < reachable));
+
   const goNext = () => {
-    setCompletedSteps(new Set([...completedSteps, currentStep]));
-    setCurrentStep(s => Math.min(s + 1, 5));
+    setCompletedSteps(new Set([...completedSteps, safeStep]));
+    setCurrentStep(Math.min(safeStep + 1, 5));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const goBack = () => {
-    setCurrentStep(s => Math.max(s - 1, 0));
+    setCurrentStep(Math.max(safeStep - 1, 0));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const goTo = (step) => {
-    setCurrentStep(step);
+    setCurrentStep(Math.min(step, reachable));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const restart = () => {
+    if (!window.confirm('Vil du starte forfra? Alt, du har skrevet, bliver slettet.')) return;
     setCurrentStep(0);
     setTopic({ research_question: '', purpose: '', target_group: '' });
-    setConstructs([{ id: Date.now(), name: '', type: 'holdning', definition: '', isScreening: false }]);
+    setConstructs([emptyConstruct()]);
     setScaleChoices({});
     setQuestions({});
     setCompletedSteps(new Set());
+  };
+  const loadExample = () => {
+    const hasWork = topic.purpose.trim() || topic.research_question.trim() || constructs.some(c => c.name.trim());
+    if (hasWork && !window.confirm('Eksemplet erstatter det, du har skrevet. Vil du fortsætte?')) return;
+    const ex = sonicWaveExample();
+    setTopic(ex.topic);
+    setConstructs(ex.constructs);
+    setScaleChoices(ex.scaleChoices);
+    setQuestions(ex.questions);
+    setCompletedSteps(new Set([0, 1, 2, 3, 4]));
+    setCurrentStep(5);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -2300,6 +2837,9 @@ export default function App() {
           border-color: var(--ink) !important;
         }
         details summary { list-style: none; }
+        details.niveau2 > summary::after { content: '▸'; color: var(--ink-soft); margin-left: auto; }
+        details.niveau2[open] > summary::after { content: '▾'; }
+        button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         details summary::-webkit-details-marker { display: none; }
         details[open] summary { margin-bottom: 0.5rem; }
         details .summary-open-text { display: none; }
@@ -2316,24 +2856,24 @@ export default function App() {
             Fra emne til <span style={{ fontStyle: 'italic' }}>spørgsmål</span>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            En struktureret guide gennem de tre kritiske led: emne-operationalisering, skalavalg og spørgsmålsformulering.
+            En struktureret guide i seks trin fra formål til færdigt spørgeskema og kodebog — klar til databehandlingen med Chi², t-test og ANOVA.
           </p>
         </div>
       </header>
 
-      <StepIndicator currentStep={currentStep} onJump={goTo} completedSteps={completedSteps} />
+      <StepIndicator currentStep={safeStep} onJump={goTo} completedSteps={effectiveCompleted} />
 
       <main className="max-w-6xl mx-auto px-8 py-12">
-        {currentStep === 0 && <TopicStep topic={topic} setTopic={setTopic} onNext={goNext} />}
-        {currentStep === 1 && <ConstructsStep topic={topic} constructs={constructs} setConstructs={setConstructs} onBack={goBack} onNext={goNext} />}
-        {currentStep === 2 && <ScalesStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} setScaleChoices={setScaleChoices} onBack={goBack} onNext={goNext} />}
-        {currentStep === 3 && <QuestionsStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} setQuestions={setQuestions} onBack={goBack} onNext={goNext} />}
-        {currentStep === 4 && <OrderStep topic={topic} constructs={constructs} setConstructs={setConstructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onNext={goNext} />}
-        {currentStep === 5 && <FinalStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onRestart={restart} />}
+        {safeStep === 0 && <TopicStep topic={topic} setTopic={setTopic} onNext={goNext} onLoadExample={loadExample} />}
+        {safeStep === 1 && <ConstructsStep topic={topic} constructs={constructs} setConstructs={setConstructs} onBack={goBack} onNext={goNext} />}
+        {safeStep === 2 && <ScalesStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} setScaleChoices={setScaleChoices} onBack={goBack} onNext={goNext} />}
+        {safeStep === 3 && <QuestionsStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} setQuestions={setQuestions} onBack={goBack} onNext={goNext} />}
+        {safeStep === 4 && <OrderStep topic={topic} constructs={constructs} setConstructs={setConstructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onNext={goNext} />}
+        {safeStep === 5 && <FinalStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onRestart={restart} />}
       </main>
 
       <footer className="max-w-6xl mx-auto px-8 py-8 mt-12 text-xs" style={{ color: 'var(--ink-soft)', borderTop: '1px solid var(--rule)' }}>
-        Værktøj til markedsanalyse · Akademisk niveau · Husk: spørgeskemaer skal altid pilottestes
+        Værktøj til markedsanalyse · Dit arbejde gemmes automatisk i denne browser · Husk: spørgeskemaer skal altid pilottestes
       </footer>
     </div>
   );

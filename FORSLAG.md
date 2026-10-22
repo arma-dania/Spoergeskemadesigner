@@ -2,6 +2,8 @@
 
 *Gennemgang af `spoergeskemadesigner.jsx`, testet som `index.html` i Chromium (desktop og mobil), oktober 2026.*
 
+> **Status (oktober 2026):** Crash-fejlen, autogem, "Start forfra" uden bekræftelse, header-teksten, Likert-måleniveauet, "Ved ikke", talsvar, springlogik, editor til svarmuligheder, indeks/omvendt kodning og kodebog-eksport er nu lavet — se KONGRUENS.md.
+>
 > **Afgrænsning (opdateret):** Databehandlingen i sprint 3 ligger på søstersiden *Statistiske test* (`arma-dania/tests`), som allerede har kodebog, rensning, øvelsesdatasæt og test bygget på SonicWave-casen. Forslagene i afsnit 2.3, A7 og Ø3-Ø8 nedenfor er derfor dækket dér og skal ikke bygges i designeren. Det vigtigste for designeren er, at den er **kongruent** med statistiksiden. Se [KONGRUENS.md](KONGRUENS.md), som har forrang, hvor de to dokumenter er uenige.
 
 **Samlet vurdering:** Værktøjet er fagligt stærkt og pædagogisk velgennemtænkt. Den analytiske kæde (formål → forskningsspørgsmål → emne → skala → spørgsmål) er tydelig. AI-prompterne er usædvanligt omhyggelige, fx med reglen mod at skifte holdning ("anti-flip-flop") ved gråzonetyper og kravet om, at kategorier skal passe til målgruppen. Det visuelle udtryk er roligt og akademisk.
