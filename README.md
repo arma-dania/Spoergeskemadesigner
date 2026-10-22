@@ -2,7 +2,7 @@
 
 **Fra emne til spørgsmål.** Et interaktivt undervisningsværktøj, der fører studerende i markedsanalyse trin for trin fra et formål til et færdigt spørgeskema, der er klar til pilottest. Hvert trin giver regelbaseret feedback og valgfri AI-feedback.
 
-Værktøjet bruges i undervisningen som bindeled mellem *design* af spørgeskemaet og *databehandling* af de data, skemaet giver (sprint 3). Et skema, der er designet med bevidste valg af emnetype og måleniveau, giver et datasæt, som er langt lettere at kode, rense og analysere.
+Værktøjet dækker **udarbejdelsen af spørgeskemaet**. Databehandlingen i sprint 3 (kodebog, rensning, Chi², t-test og ANOVA) ligger på søstersiden **Statistiske test** (`arma-dania/tests`), der bygger på SonicWave-casen. De to sider skal være indbyrdes kongruente. Et SonicWave-skema bygget i designeren skal give præcis det datasæt og den kodebog, som statistiksiden bruger. Se **[KONGRUENS.md](KONGRUENS.md)**.
 
 ---
 
@@ -35,22 +35,21 @@ Den analytiske kæde, som værktøjet bygger på:
 Formål → Forskningsspørgsmål → Emner → Skalaer → Spørgsmål
 ```
 
-I sprint 3 forlænges kæden: `… → Data → Kodebog → Rensning → Analyse → Beslutning`. Se [FORSLAG.md](FORSLAG.md).
+På statistiksiden fortsætter kæden: `… → Data → Kodebog → Rensning → Test → Beslutning`.
 
 ---
 
-## Brug i sprint 3: databehandling
+## Sammenhæng med statistiksiden (SonicWave)
 
-Sådan kan værktøjet bruges i et forløb om databehandling af spørgeskemadata:
+| Spørgeskemadesigneren (sprint 2) | Statistiske test (sprint 3) |
+|---|---|
+| Emne → spørgsmål | Variabel i kodebogen |
+| Skalaens måleniveau | Måleniveau i kodebogen → valg af test (beslutningstræet) |
+| Screening / filterspørgsmål | Frasorterede respondenter / springlogik (tomme celler = "ikke relevant") |
+| "Ved ikke" som svarmulighed | Kode 99 → tom celle før analyse |
+| Flere udsagn om samme holdning | Indeks (negativt formulerede vendes: 6 − svar) |
 
-1. **Genbrug designet.** De studerende eksporterer deres udkast (Word/.txt) fra sprint 2. *Designgrundlaget* (emne, type, skala, måleniveau og begrundelse) er råmaterialet til en kodebog.
-2. **Fra måleniveau til analyse.** Kolonnen *Måleniveau* bestemmer, hvilke deskriptive mål og test der er lovlige. Nominale data giver frekvenser, typetal og χ². Ordinale data giver median og rangtest. Intervaldata giver gennemsnit, t-test og korrelation.
-3. **Typiske kodningsproblemer findes allerede i designet.**
-   - *Multiple choice (flere svar)* bliver én 0/1-variabel pr. svarmulighed. Værktøjet skriver det selv i skalaens faldgrube.
-   - *Rangordning* bliver én variabel pr. element.
-   - *Ved ikke* og *Vil ikke svare* skal kodes som manglende værdier, ikke som et skalatrin.
-   - *Screeningsspørgsmål* bruges til at frasortere respondenter, før analysen begynder.
-   - *Åbne spørgsmål* kræver kategorisering, før de kan tælles.
+Et tjek af, om de to sider faktisk siger det samme, og en liste over det, der skal rettes, står i **[KONGRUENS.md](KONGRUENS.md)**.
 
 Konkrete øvelser, animationer og forslag til udvidelser står i **[FORSLAG.md](FORSLAG.md)**.
 

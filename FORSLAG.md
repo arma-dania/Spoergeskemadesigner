@@ -1,6 +1,8 @@
-# Gennemgang og forslag: Spørgeskemadesigneren i sprint 3
+# Gennemgang og forslag: Spørgeskemadesigneren
 
 *Gennemgang af `spoergeskemadesigner.jsx`, testet som `index.html` i Chromium (desktop og mobil), oktober 2026.*
+
+> **Afgrænsning (opdateret):** Databehandlingen i sprint 3 ligger på søstersiden *Statistiske test* (`arma-dania/tests`), som allerede har kodebog, rensning, øvelsesdatasæt og test bygget på SonicWave-casen. Forslagene i afsnit 2.3, A7 og Ø3-Ø8 nedenfor er derfor dækket dér og skal ikke bygges i designeren. Det vigtigste for designeren er, at den er **kongruent** med statistiksiden. Se [KONGRUENS.md](KONGRUENS.md), som har forrang, hvor de to dokumenter er uenige.
 
 **Samlet vurdering:** Værktøjet er fagligt stærkt og pædagogisk velgennemtænkt. Den analytiske kæde (formål → forskningsspørgsmål → emne → skala → spørgsmål) er tydelig. AI-prompterne er usædvanligt omhyggelige, fx med reglen mod at skifte holdning ("anti-flip-flop") ved gråzonetyper og kravet om, at kategorier skal passe til målgruppen. Det visuelle udtryk er roligt og akademisk.
 
@@ -60,7 +62,7 @@ En knap *"Generér testdatasæt (n = 200)"* kunne lave syntetiske svar, der pass
 Hver studerende eller gruppe får dermed **sit eget datasæt fra sit eget skema**. Det giver ejerskab og gør det svært blot at kopiere hinandens løsninger.
 
 ### 2.4 Mindre faglige justeringer
-- **Måleniveau for Likert.** Formuleringen "ordinal med metrisk tilføjelse (behandles som interval)" er god. Tilføj gerne en kort note om, at det er en *antagelse*, der bør diskuteres (median vs. gennemsnit). Det er et oplagt diskussionspunkt i sprint 3.
+- **Måleniveau for Likert.** Formuleringen "ordinal med metrisk tilføjelse (behandles som interval)" strider mod statistiksiden, som lærer, at ét Likert-udsagn er ordinalt, og at et indeks kan behandles som interval. Se KONGRUENS.md, punkt D1.
 - **Frekvensskala (konkret)** står som "ordinal eller ratio". Grupperede intervaller (1-2, 3-5 …) er ordinale. Kun et eksakt antal er ratio. Overvej at dele skalaen i to.
 - **Stikprøve og svarprocent.** Tjeklisten kunne udvides med *stikprøvestørrelse*, *forventet svarprocent* og *GDPR/samtykke*, som alle har betydning for den senere databehandling.
 - **Eksport til spørgeskemaplatforme**, fx Google Forms, Microsoft Forms eller SurveyXact (import af spørgsmål), så skemaet faktisk kan sendes ud og give rigtige data.
