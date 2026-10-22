@@ -2633,6 +2633,315 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
 }
 
 // ============================================================================
+// INTRODUKTION: FORMÅL, ANVENDELSE OG ANIMATION AF DE SEKS TRIN
+// ============================================================================
+
+// Animeret element: toner/glider ind efter `delay` sekunder (slås fra ved reduceret bevægelse)
+function Anim({ delay = 0, kind = 'introFadeUp', className = '', style, children }) {
+  return (
+    <div className={`intro-anim ${className}`} style={{ animationName: kind, animationDelay: `${delay}s`, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+// Tekst, der "skrives" ord for ord
+function Words({ text, start = 0, step = 0.07 }) {
+  return text.split(' ').map((w, i) => (
+    <span key={i} className="intro-anim" style={{ animationName: 'introFade', animationDelay: `${start + i * step}s`, display: 'inline-block', marginRight: '0.28em' }}>{w}</span>
+  ));
+}
+
+const introFont = { fontFamily: 'IBM Plex Sans, sans-serif' };
+const introSerif = { fontFamily: 'Fraunces, serif' };
+
+function IntroChip({ label, type, accent }) {
+  return (
+    <div className="px-3 py-2" style={{ backgroundColor: 'var(--paper)', border: `1px solid ${accent ? 'var(--accent)' : 'var(--rule)'}`, borderLeft: `3px solid ${accent ? 'var(--accent)' : 'var(--ink)'}`, minWidth: '9.5rem' }}>
+      <div className="text-sm" style={{ ...introSerif, fontWeight: 500, color: 'var(--ink)' }}>{label}</div>
+      <div className="text-xs uppercase tracking-wider" style={{ ...introFont, color: 'var(--ink-soft)' }}>{type}</div>
+    </div>
+  );
+}
+
+// Trin 5: kortene bytter plads, så screening kommer først og demografi sidst
+function IntroReorder() {
+  const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const [sorted, setSorted] = useState(reduce);
+  useEffect(() => {
+    if (reduce) return undefined;
+    const t = setTimeout(() => setSorted(true), 1600);
+    return () => clearTimeout(t);
+  }, [reduce]);
+  const items = [
+    { id: 'koen', label: 'Hvad er dit køn?', tag: 'demografi' },
+    { id: 'farve', label: 'Hvilken farve foretrækker du?', tag: '' },
+    { id: 'alder', label: 'Hvor gammel er du?', tag: 'SCREENING' },
+    { id: 'ejer', label: 'Ejer du en SonicWave?', tag: 'filter' },
+  ];
+  const order = sorted ? ['alder', 'farve', 'ejer', 'koen'] : items.map(i => i.id);
+  return (
+    <div className="relative mx-auto" style={{ height: `${items.length * 52}px`, maxWidth: '26rem' }}>
+      {items.map(it => {
+        const pos = order.indexOf(it.id);
+        return (
+          <div key={it.id} className="intro-move absolute left-0 right-0 flex items-center gap-3 px-3"
+            style={{ top: `${pos * 52}px`, height: '44px', transition: 'top 0.9s cubic-bezier(.2,.7,.2,1)', backgroundColor: 'var(--paper)', border: `1px solid ${it.tag === 'SCREENING' ? 'var(--accent)' : 'var(--rule)'}` }}>
+            <span style={{ ...introSerif, color: 'var(--accent)', fontWeight: 500, minWidth: '1.6rem' }}>{String(pos + 1).padStart(2, '0')}</span>
+            <span className="text-sm flex-1" style={{ ...introSerif, color: 'var(--ink)' }}>{it.label}</span>
+            {it.tag && <span className="text-xs uppercase px-1.5" style={{ ...introFont, letterSpacing: '0.08em', color: it.tag === 'SCREENING' ? 'var(--accent)' : 'var(--ink-soft)', border: `1px solid ${it.tag === 'SCREENING' ? 'var(--accent)' : 'var(--rule)'}` }}>{it.tag}</span>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const INTRO_SCENES = [
+  {
+    title: 'Forskningsemne',
+    caption: 'Start med beslutningen, undersøgelsen skal hjælpe med. Den bliver til et forskningsspørgsmål, som data kan besvare.',
+    render: () => (
+      <div className="flex flex-col items-center gap-3 w-full" style={{ maxWidth: '30rem' }}>
+        <Anim className="w-full p-4" style={{ backgroundColor: 'var(--paper)', borderLeft: '3px solid var(--accent)' }}>
+          <div className="text-xs uppercase tracking-wider mb-1" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Formål · beslutning</div>
+          <div className="text-base" style={{ ...introSerif, color: 'var(--ink)' }}><Words text="Hvilke farver skal SonicWaves nye højttaler markedsføres i — og til hvem?" start={0.3} /></div>
+        </Anim>
+        <Anim delay={1.6} kind="introFade" className="text-xl" style={{ color: 'var(--ink-soft)' }}>↓</Anim>
+        <Anim delay={1.9} className="w-full p-4" style={{ backgroundColor: 'var(--paper)', borderLeft: '3px solid var(--ink)' }}>
+          <div className="text-xs uppercase tracking-wider mb-1" style={{ ...introFont, color: 'var(--ink-soft)', fontWeight: 600 }}>Forskningsspørgsmål</div>
+          <div className="text-base" style={{ ...introSerif, color: 'var(--ink)', fontStyle: 'italic' }}><Words text="Hænger foretrukken farve sammen med alder?" start={2.1} /></div>
+        </Anim>
+      </div>
+    ),
+  },
+  {
+    title: 'Emner',
+    caption: 'Del forskningsspørgsmålet op i emner — det, du skal måle. Hvert emne får en type: holdning, adfærd, intention, viden eller demografi.',
+    render: () => (
+      <div className="flex flex-col items-center gap-4 w-full">
+        <Anim className="px-4 py-2 text-sm" style={{ ...introSerif, fontStyle: 'italic', color: 'var(--ink)', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
+          Hænger foretrukken farve sammen med alder?
+        </Anim>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Anim delay={0.8} kind="introPop"><IntroChip label="Alder" type="demografi" /></Anim>
+          <Anim delay={1.2} kind="introPop"><IntroChip label="Foretrukken farve" type="holdning" /></Anim>
+          <Anim delay={1.6} kind="introPop"><IntroChip label="Ejer en SonicWave" type="adfærd" /></Anim>
+        </div>
+        <Anim delay={2.4} kind="introFade" className="text-xs text-center" style={{ ...introFont, color: 'var(--ink-soft)', maxWidth: '26rem' }}>
+          Operationalisering: Hvad betyder emnet helt konkret? Fx “alder i hele år”.
+        </Anim>
+      </div>
+    ),
+  },
+  {
+    title: 'Skalavalg',
+    caption: 'Vælg en svarskala til hvert emne. Skalaens måleniveau afgør, hvilken test du kan bruge i databehandlingen.',
+    render: () => (
+      <div className="flex flex-wrap justify-center gap-4 w-full">
+        {[
+          ['Alder', 'Talsvar', 'ratio', 't-test · ANOVA · grupper → Chi²'],
+          ['Foretrukken farve', 'Multiple choice', 'nominal', 'Chi²'],
+          ['Ejer en SonicWave', 'Ja / Nej', 'nominal', 'Chi² · filter'],
+        ].map(([label, scale, level, test], i) => (
+          <div key={label} className="flex flex-col items-center gap-2">
+            <IntroChip label={label} type={level} />
+            <Anim delay={0.5 + i * 0.5} kind="introSlideIn" className="text-xs px-2 py-1" style={{ ...introFont, color: 'var(--paper)', backgroundColor: 'var(--ink)' }}>{scale}</Anim>
+            <Anim delay={1.9 + i * 0.3} kind="introPop" className="text-xs px-2 py-1" style={{ ...introFont, color: 'var(--accent)', border: '1px solid var(--accent)', fontWeight: 600 }}>{test}</Anim>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    title: 'Spørgsmål',
+    caption: 'Formulér spørgsmålet og svarmulighederne. Automatiske advarsler og AI-feedback hjælper dig med at gøre det klart og uden ledende ord.',
+    render: () => (
+      <div className="w-full p-5" style={{ maxWidth: '30rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
+        <div className="text-base mb-3" style={{ ...introSerif, color: 'var(--ink)' }}>
+          <Words text="SonicWaves nye model kommer i tre farver. Hvilken foretrækker du?" start={0.2} step={0.08} />
+        </div>
+        {['Sort', 'Hvid', 'Sand'].map((o, i) => (
+          <Anim key={o} delay={1.5 + i * 0.25} kind="introSlideIn" className="flex items-center gap-2 text-sm mb-1.5" style={{ ...introFont, color: 'var(--ink)' }}>
+            <span style={{ width: 12, height: 12, borderRadius: '50%', border: '1.5px solid var(--ink-soft)', display: 'inline-block' }} /> {o}
+          </Anim>
+        ))}
+        <Anim delay={2.8} kind="introPop" className="mt-3 inline-flex items-center gap-2 text-xs px-2 py-1" style={{ ...introFont, backgroundColor: 'var(--paper-warm)' }}>
+          <span style={{ color: 'var(--ink-soft)', letterSpacing: '0.1em', fontWeight: 600 }}>FORMULERING</span>
+          <span style={{ color: 'var(--success)', fontWeight: 600 }}>GOD</span>
+        </Anim>
+      </div>
+    ),
+  },
+  {
+    title: 'Rækkefølge',
+    caption: 'Læg spørgsmålene i en rækkefølge, der virker for respondenten: screening først, filter før de spørgsmål, det styrer, og demografi til sidst.',
+    render: () => <div className="w-full"><IntroReorder /></div>,
+  },
+  {
+    title: 'Færdigt udkast',
+    caption: 'Du får et færdigt skema til pilottest og en kodebog. Kodebogen er broen til databehandlingen med Chi², t-test og ANOVA.',
+    render: () => (
+      <div className="flex flex-wrap justify-center items-start gap-5 w-full">
+        <Anim className="p-4" style={{ width: '14rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)', boxShadow: '0 2px 6px rgba(26,35,50,0.08)' }}>
+          <div className="text-xs uppercase tracking-wider mb-2" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Spørgeskema</div>
+          {['Hvor gammel er du?', 'Hvilken farve …?', 'Ejer du en …?', 'Hvad er dit køn?'].map((q, i) => (
+            <Anim key={q} delay={0.4 + i * 0.25} kind="introSlideIn" className="text-xs mb-1.5" style={{ ...introSerif, color: 'var(--ink)' }}>
+              <span style={{ color: 'var(--accent)' }}>{String(i + 1).padStart(2, '0')}.</span> {q}
+            </Anim>
+          ))}
+        </Anim>
+        <Anim delay={1.6} kind="introFade" className="self-center text-xl" style={{ color: 'var(--ink-soft)' }}>→</Anim>
+        <Anim delay={1.8} className="p-4" style={{ width: '15rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
+          <div className="text-xs uppercase tracking-wider mb-2" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Kodebog</div>
+          {[['alder', 'Ratio'], ['foretrukken_farve', 'Nominal'], ['ejer_produkt', 'Nominal'], ['køn', 'Nominal']].map(([v, l], i) => (
+            <Anim key={v} delay={2.1 + i * 0.2} kind="introFade" className="flex justify-between text-xs py-0.5" style={{ ...introFont, borderBottom: '1px solid var(--rule)' }}>
+              <span style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace', color: 'var(--accent)' }}>{v}</span>
+              <span style={{ color: 'var(--ink-soft)' }}>{l}</span>
+            </Anim>
+          ))}
+          <Anim delay={3.1} kind="introPop" className="mt-3 text-xs text-center px-2 py-1" style={{ ...introFont, color: 'var(--paper)', backgroundColor: 'var(--accent)', fontWeight: 600 }}>
+            Chi² · t-test · ANOVA
+          </Anim>
+        </Anim>
+      </div>
+    ),
+  },
+];
+
+const INTRO_SCENE_MS = 7500;
+
+function StepsAnimation() {
+  const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const [scene, setScene] = useState(0);
+  const [playing, setPlaying] = useState(!reduce);
+  useEffect(() => {
+    if (!playing) return undefined;
+    const t = setTimeout(() => setScene(s => (s + 1) % INTRO_SCENES.length), INTRO_SCENE_MS);
+    return () => clearTimeout(t);
+  }, [playing, scene]);
+  const go = i => setScene((i + INTRO_SCENES.length) % INTRO_SCENES.length);
+  const sc = INTRO_SCENES[scene];
+
+  return (
+    <div style={{ backgroundColor: 'var(--paper-warm)', border: '1px solid var(--rule)' }}>
+      {/* Trinlinje: klik for at hoppe */}
+      <div className="flex flex-wrap gap-1 p-3" style={{ borderBottom: '1px solid var(--rule)' }} role="tablist" aria-label="De seks trin">
+        {INTRO_SCENES.map((s, i) => (
+          <button key={s.title} role="tab" aria-selected={i === scene} onClick={() => go(i)}
+            className="flex items-center gap-2 px-2 py-1 text-xs" style={{ ...introFont, color: i === scene ? 'var(--ink)' : 'var(--ink-soft)', fontWeight: i === scene ? 600 : 400 }}>
+            <span className="flex items-center justify-center" style={{ width: 20, height: 20, borderRadius: '50%', ...introSerif, fontSize: '0.7rem',
+              backgroundColor: i === scene ? 'var(--ink)' : i < scene ? 'var(--accent)' : 'transparent',
+              color: i <= scene ? 'var(--paper)' : 'var(--ink-soft)', border: i <= scene ? 'none' : '1px solid var(--rule)' }}>{i + 1}</span>
+            <span className="hidden sm:inline">{s.title}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Scenen: key tvinger animationerne til at starte forfra */}
+      <div key={scene} className="px-4 sm:px-8 pt-8 pb-4 flex flex-col items-center" aria-live="polite">
+        <Anim kind="introFade" className="text-xs uppercase tracking-[0.2em] mb-1" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>
+          Trin {scene + 1} af 6
+        </Anim>
+        <Anim kind="introFade" className="mb-6 text-center" style={{ ...introSerif, fontSize: '1.6rem', fontWeight: 500, color: 'var(--ink)' }}>
+          {sc.title}
+        </Anim>
+        <div className="w-full flex justify-center items-center" style={{ minHeight: '230px' }}>{sc.render()}</div>
+        <p className="mt-6 text-sm text-center" style={{ ...introFont, color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: '38rem' }}>{sc.caption}</p>
+      </div>
+
+      {/* Fremdrift og knapper */}
+      <div style={{ height: 2, backgroundColor: 'var(--rule)' }}>
+        {playing && <div key={`p${scene}`} className="intro-progress" style={{ height: 2, backgroundColor: 'var(--accent)', animation: `introProgress ${INTRO_SCENE_MS}ms linear both` }} />}
+      </div>
+      <div className="flex items-center justify-between gap-2 p-3">
+        <button onClick={() => go(scene - 1)} className="px-3 py-1.5 text-xs" style={{ ...introFont, color: 'var(--ink-soft)' }} aria-label="Forrige trin">← Forrige</button>
+        <button onClick={() => setPlaying(!playing)} className="px-3 py-1.5 text-xs" style={{ ...introFont, color: 'var(--ink)', border: '1px solid var(--rule)' }}>
+          {playing ? '❚❚ Pause' : '▶ Afspil'}
+        </button>
+        <button onClick={() => go(scene + 1)} className="px-3 py-1.5 text-xs" style={{ ...introFont, color: 'var(--ink-soft)' }} aria-label="Næste trin">Næste →</button>
+      </div>
+    </div>
+  );
+}
+
+function IntroPage({ onStart, onLoadExample, hasWork }) {
+  const cards = [
+    ['Formål', 'At lære at designe et spørgeskema, hvor hvert spørgsmål har en grund til at være der — og hvor svarene kan bruges til at træffe en beslutning.'],
+    ['Til hvem', 'Studerende i markedsanalyse. Værktøjet bruges, når I skal lave et spørgeskema. Bagefter arbejder I videre med data på statistiksiden.'],
+    ['Det får du', 'Et færdigt udkast til pilottest og en kodebog, der viser, hvordan svarene bliver til data. Det kan hentes som Word, PDF, tekst og CSV.'],
+  ];
+  const howTo = [
+    ['Start med formålet.', 'Hvilken beslutning skal undersøgelsen hjælpe med? Resten udledes derfra.'],
+    ['Brug feedbacken som sparring.', 'De automatiske advarsler og AI-feedbacken peger på svagheder — men det er dig, der beslutter.'],
+    ['Kig på eksemplet.', 'SonicWave-eksemplet viser alle seks trin færdige. Det er det samme skema, som datasættet i databehandlingen kommer fra.'],
+    ['Niveau 2 er valgfrit.', 'Bokse mærket “Niveau 2” går et skridt videre (fx indeks af flere udsagn). Du skal ikke bruge dem.'],
+    ['Dit arbejde gemmes.', 'Alt gemmes automatisk i browseren. Hent udkastet, når du er færdig, og pilottest det på 3–5 personer.'],
+  ];
+  return (
+    <div>
+      <header className="mb-10">
+        <div className="text-xs uppercase tracking-[0.2em] mb-3" style={{ ...introFont, color: 'var(--accent)', fontWeight: 500 }}>Introduktion</div>
+        <h1 className="mb-3" style={{ ...introSerif, fontSize: '2.25rem', fontWeight: 500, color: 'var(--ink)', lineHeight: 1.15 }}>
+          Et godt spørgeskema starter med en beslutning
+        </h1>
+        <p className="max-w-2xl" style={{ ...introFont, color: 'var(--ink-soft)', fontSize: '0.975rem', lineHeight: 1.6 }}>
+          Spørgeskemadesigneren fører dig i seks trin fra et formål til et færdigt spørgeskema. Undervejs træffer du de valg,
+          der afgør, om dine data senere kan svare på det, du vil vide: hvad du måler, hvordan du måler det, og hvordan
+          du spørger.
+        </p>
+      </header>
+
+      <div className="grid md:grid-cols-3 gap-4 mb-12">
+        {cards.map(([t, d]) => (
+          <div key={t} className="p-5" style={{ backgroundColor: 'var(--paper-warm)', borderTop: '2px solid var(--accent)' }}>
+            <h2 className="text-xs uppercase tracking-[0.18em] mb-2" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>{t}</h2>
+            <p className="text-sm" style={{ ...introFont, color: 'var(--ink)', lineHeight: 1.6 }}>{d}</p>
+          </div>
+        ))}
+      </div>
+
+      <h2 className="mb-2" style={{ ...introSerif, fontSize: '1.5rem', fontWeight: 500, color: 'var(--ink)' }}>De seks trin</h2>
+      <p className="text-sm mb-5 max-w-2xl" style={{ ...introFont, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+        Animationen følger SonicWave-casen gennem alle seks trin. Klik på et trin for at hoppe, eller sæt den på pause.
+      </p>
+      <StepsAnimation />
+
+      <div className="grid lg:grid-cols-3 gap-10 mt-12">
+        <div className="lg:col-span-2">
+          <h2 className="mb-4" style={{ ...introSerif, fontSize: '1.5rem', fontWeight: 500, color: 'var(--ink)' }}>Sådan bruger du værktøjet</h2>
+          <ol className="space-y-3">
+            {howTo.map(([t, d], i) => (
+              <li key={t} className="flex gap-4 text-sm" style={{ ...introFont, color: 'var(--ink)', lineHeight: 1.6 }}>
+                <span style={{ ...introSerif, color: 'var(--accent)', fontWeight: 500, minWidth: '1.5rem' }}>{i + 1}.</span>
+                <span><strong style={{ fontWeight: 600 }}>{t}</strong> {d}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <aside className="p-6" style={{ backgroundColor: 'var(--paper-warm)', borderLeft: '2px solid var(--accent)' }}>
+          <h3 className="text-xs uppercase tracking-[0.18em] mb-3" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Hænger sammen med databehandlingen</h3>
+          <p className="text-sm" style={{ ...introFont, color: 'var(--ink)', lineHeight: 1.6 }}>
+            Skalaen, du vælger i trin 3, bestemmer, om svarene senere kan bruges i <em style={introSerif}>Chi²</em>,
+            en <em style={introSerif}>t-test</em> eller en <em style={introSerif}>ANOVA</em>. Hvert skalakort viser det,
+            og kodebogen i trin 6 har samme form som kodebogen på statistiksiden.
+          </p>
+        </aside>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 pt-10 mt-10 border-t" style={{ borderColor: 'var(--rule)' }}>
+        <button onClick={onStart} className="px-6 py-2.5 text-sm" style={{ ...introFont, fontWeight: 500, backgroundColor: 'var(--ink)', color: 'var(--paper)' }}>
+          {hasWork ? 'Fortsæt dit skema →' : 'Start dit eget skema →'}
+        </button>
+        <button onClick={onLoadExample} className="px-5 py-2.5 text-sm" style={{ ...introFont, fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--ink)' }}>
+          Se SonicWave-eksemplet
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // EKSEMPEL: SONICWAVE
 // Samme spørgsmål, rækkefølge, måleniveauer og koder som kodebogen på
 // statistiksiden (arma-dania/tests, § 01). Ændres det ene, skal det andet følge med.
@@ -2723,6 +3032,7 @@ export default function App() {
   const [scaleChoices, setScaleChoices] = useState(saved ? stripLoading(saved.scaleChoices || {}) : {});
   const [questions, setQuestions] = useState(saved ? stripLoading(saved.questions || {}) : {});
   const [completedSteps, setCompletedSteps] = useState(new Set(saved?.completedSteps ?? []));
+  const [showIntro, setShowIntro] = useState(!saved);
 
   // Inject Google Fonts
   useEffect(() => {
@@ -2777,6 +3087,8 @@ export default function App() {
     setQuestions({});
     setCompletedSteps(new Set());
   };
+  const openIntro = () => { setShowIntro(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const startFromIntro = () => { setShowIntro(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const loadExample = () => {
     const hasWork = topic.purpose.trim() || topic.research_question.trim() || constructs.some(c => c.name.trim());
     if (hasWork && !window.confirm('Eksemplet erstatter det, du har skrevet. Vil du fortsætte?')) return;
@@ -2787,6 +3099,7 @@ export default function App() {
     setQuestions(ex.questions);
     setCompletedSteps(new Set([0, 1, 2, 3, 4]));
     setCurrentStep(5);
+    setShowIntro(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -2811,6 +3124,17 @@ export default function App() {
         input:focus, textarea:focus, select:focus {
           border-color: var(--ink) !important;
         }
+        @keyframes introFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        @keyframes introFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes introPop { 0% { opacity: 0; transform: scale(0.85); } 70% { opacity: 1; transform: scale(1.04); } 100% { opacity: 1; transform: none; } }
+        @keyframes introSlideIn { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+        @keyframes introProgress { from { width: 0; } to { width: 100%; } }
+        .intro-anim { animation-duration: 0.6s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+        @media (prefers-reduced-motion: reduce) {
+          .intro-anim { animation: none !important; }
+          .intro-move { transition: none !important; }
+          .intro-progress { display: none; }
+        }
         details summary { list-style: none; }
         details.niveau2 > summary::after { content: '▸'; color: var(--ink-soft); margin-left: auto; }
         details.niveau2[open] > summary::after { content: '▾'; }
@@ -2833,18 +3157,26 @@ export default function App() {
           <p className="mt-2 text-sm max-w-2xl" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
             En struktureret guide i seks trin fra formål til færdigt spørgeskema og kodebog — klar til databehandlingen med Chi², t-test og ANOVA.
           </p>
+          <button
+            onClick={showIntro ? startFromIntro : openIntro}
+            className="mt-4 px-3 py-1.5 text-xs"
+            style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--rule)', backgroundColor: 'var(--paper)' }}
+          >
+            {showIntro ? 'Gå til værktøjet →' : 'Om værktøjet og de seks trin'}
+          </button>
         </div>
       </header>
 
-      <StepIndicator currentStep={safeStep} onJump={goTo} completedSteps={effectiveCompleted} />
+      {!showIntro && <StepIndicator currentStep={safeStep} onJump={goTo} completedSteps={effectiveCompleted} />}
 
       <main className="max-w-6xl mx-auto px-8 py-12">
-        {safeStep === 0 && <TopicStep topic={topic} setTopic={setTopic} onNext={goNext} onLoadExample={loadExample} />}
-        {safeStep === 1 && <ConstructsStep topic={topic} constructs={constructs} setConstructs={setConstructs} onBack={goBack} onNext={goNext} />}
-        {safeStep === 2 && <ScalesStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} setScaleChoices={setScaleChoices} onBack={goBack} onNext={goNext} />}
-        {safeStep === 3 && <QuestionsStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} setQuestions={setQuestions} onBack={goBack} onNext={goNext} />}
-        {safeStep === 4 && <OrderStep topic={topic} constructs={constructs} setConstructs={setConstructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onNext={goNext} />}
-        {safeStep === 5 && <FinalStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onRestart={restart} />}
+        {showIntro && <IntroPage onStart={startFromIntro} onLoadExample={loadExample} hasWork={Boolean(topic.purpose.trim() || constructs.some(c => c.name.trim()))} />}
+        {!showIntro && safeStep === 0 && <TopicStep topic={topic} setTopic={setTopic} onNext={goNext} onLoadExample={loadExample} />}
+        {!showIntro && safeStep === 1 && <ConstructsStep topic={topic} constructs={constructs} setConstructs={setConstructs} onBack={goBack} onNext={goNext} />}
+        {!showIntro && safeStep === 2 && <ScalesStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} setScaleChoices={setScaleChoices} onBack={goBack} onNext={goNext} />}
+        {!showIntro && safeStep === 3 && <QuestionsStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} setQuestions={setQuestions} onBack={goBack} onNext={goNext} />}
+        {!showIntro && safeStep === 4 && <OrderStep topic={topic} constructs={constructs} setConstructs={setConstructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onNext={goNext} />}
+        {!showIntro && safeStep === 5 && <FinalStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} questions={questions} onBack={goBack} onRestart={restart} />}
       </main>
 
       <footer className="max-w-6xl mx-auto px-8 py-8 mt-12 text-xs" style={{ color: 'var(--ink-soft)', borderTop: '1px solid var(--rule)' }}>

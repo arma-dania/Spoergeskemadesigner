@@ -38,6 +38,10 @@ Valgfrie miljøvariabler:
 
 ---
 
+## Introduktionsside
+
+Første gang værktøjet åbnes, vises en introduktionsside. Den forklarer formål og anvendelse og har en animation, der følger SonicWave-casen gennem de seks trin. Animationen kører automatisk og kan sættes på pause. Man kan også klikke direkte på et trin. Ved reduceret bevægelse (styresystemets indstilling) vises hvert trin uden animation. Siden kan altid åbnes igen med knappen *Om værktøjet og de seks trin* i toppen.
+
 ## De seks trin
 
 | # | Trin | Den studerende… | Feedback |
