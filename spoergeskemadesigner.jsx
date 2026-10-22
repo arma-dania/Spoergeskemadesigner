@@ -2840,7 +2840,7 @@ function StepsAnimation() {
   );
 }
 
-function IntroPage({ onStart, onLoadExample, hasWork }) {
+function IntroPage({ onStart, onLoadExample, onRestart, hasWork }) {
   const cards = [
     ['Formål', 'At lære at designe et spørgeskema, hvor hvert spørgsmål har en grund til at være der — og hvor svarene kan bruges til at træffe en beslutning.'],
     ['Til hvem', 'Studerende i markedsanalyse, der skal lave en kvantitativ undersøgelse som en del af metoden i sprint 3.'],
@@ -2911,6 +2911,11 @@ function IntroPage({ onStart, onLoadExample, hasWork }) {
         <button onClick={onLoadExample} className="px-5 py-2.5 text-sm" style={{ ...introFont, fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--ink)' }}>
           Se SonicWave-eksemplet
         </button>
+        {hasWork && (
+          <button onClick={onRestart} className="px-5 py-2.5 text-sm" style={{ ...introFont, color: 'var(--ink-soft)' }}>
+            Start forfra med et tomt skema
+          </button>
+        )}
       </div>
     </div>
   );
@@ -3054,7 +3059,10 @@ export default function App() {
   };
   const reachable = Math.min(firstIncompleteStep(), 5);
   const safeStep = Math.min(currentStep, reachable);
-  const effectiveCompleted = new Set([...completedSteps].filter(st => st < reachable));
+  // Gennemførte trin, man kan hoppe til. Er alt udfyldt (reachable === 5), kan man også
+  // vende tilbage til det færdige udkast, når man først har været forbi trin 5.
+  const effectiveCompleted = new Set([...completedSteps].filter(st => st < reachable || reachable === 5));
+  if (reachable === 5 && completedSteps.has(4)) effectiveCompleted.add(5);
 
   const goNext = () => {
     setCompletedSteps(new Set([...completedSteps, safeStep]));
@@ -3069,26 +3077,40 @@ export default function App() {
     setCurrentStep(Math.min(step, reachable));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  const restart = () => {
-    if (!window.confirm('Vil du starte forfra? Alt, du har skrevet, bliver slettet.')) return;
+  const hasWork = Boolean(topic.purpose.trim() || topic.research_question.trim() || constructs.some(c => c.name.trim()));
+  // Bekræftelse vises på selve siden (window.confirm kan være blokeret, fx i et Claude-artifact)
+  const [pendingConfirm, setPendingConfirm] = useState(null);
+  const askConfirm = (message, confirmLabel, action) => {
+    setPendingConfirm({ message, confirmLabel, action });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const doRestart = () => {
     setCurrentStep(0);
     setTopic({ research_question: '', purpose: '', target_group: '' });
     setConstructs([emptyConstruct()]);
     setScaleChoices({});
     setQuestions({});
     setCompletedSteps(new Set());
+    setShowIntro(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const restart = () => {
+    if (!hasWork) { doRestart(); return; }
+    askConfirm('Vil du starte forfra med et tomt skema? Alt, der står i skemaet nu, bliver slettet.', 'Ja, slet og start forfra', doRestart);
   };
   const openIntro = () => { setShowIntro(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const startFromIntro = () => { setShowIntro(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const loadExample = () => {
-    const hasWork = topic.purpose.trim() || topic.research_question.trim() || constructs.some(c => c.name.trim());
-    if (hasWork && !window.confirm('Eksemplet erstatter det, du har skrevet. Vil du fortsætte?')) return;
+    if (hasWork) askConfirm('SonicWave-eksemplet erstatter det, der står i skemaet nu.', 'Ja, indlæs eksemplet', doLoadExample);
+    else doLoadExample();
+  };
+  const doLoadExample = () => {
     const ex = sonicWaveExample();
     setTopic(ex.topic);
     setConstructs(ex.constructs);
     setScaleChoices(ex.scaleChoices);
     setQuestions(ex.questions);
-    setCompletedSteps(new Set([0, 1, 2, 3, 4]));
+    setCompletedSteps(new Set([0, 1, 2, 3, 4, 5]));
     setCurrentStep(5);
     setShowIntro(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3156,15 +3178,46 @@ export default function App() {
           >
             {showIntro ? 'Gå til værktøjet →' : 'Om værktøjet og de seks trin'}
           </button>
+          {hasWork && (
+            <button
+              onClick={restart}
+              className="mt-4 ml-2 px-3 py-1.5 text-xs"
+              style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500, color: 'var(--ink-soft)', border: '1px solid var(--rule)', backgroundColor: 'transparent' }}
+            >
+              Start forfra
+            </button>
+          )}
           </div>
           <div className="hidden sm:block"><ClipboardMark size={104} /></div>
         </div>
       </header>
 
+      {pendingConfirm && (
+        <div role="alertdialog" aria-live="assertive" className="border-b" style={{ borderColor: 'var(--rule)', backgroundColor: '#f6e9e6' }}>
+          <div className="max-w-6xl mx-auto px-8 py-4 flex flex-wrap items-center gap-3">
+            <p className="text-sm flex-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)', minWidth: '14rem' }}>{pendingConfirm.message}</p>
+            <button
+              onClick={() => { const a = pendingConfirm.action; setPendingConfirm(null); a(); }}
+              className="px-4 py-2 text-sm"
+              style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500, color: 'var(--paper)', backgroundColor: 'var(--accent)' }}
+            >
+              {pendingConfirm.confirmLabel}
+            </button>
+            <button
+              onClick={() => setPendingConfirm(null)}
+              className="px-4 py-2 text-sm"
+              style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)', border: '1px solid var(--rule)' }}
+            >
+              Fortryd
+            </button>
+          </div>
+        </div>
+      )}
+
       {!showIntro && <StepIndicator currentStep={safeStep} onJump={goTo} completedSteps={effectiveCompleted} />}
 
       <main className="max-w-6xl mx-auto px-8 py-12">
-        {showIntro && <IntroPage onStart={startFromIntro} onLoadExample={loadExample} hasWork={Boolean(topic.purpose.trim() || constructs.some(c => c.name.trim()))} />}
+        {showIntro && <IntroPage onStart={startFromIntro} onLoadExample={loadExample} onRestart={restart} hasWork={hasWork} />}
         {!showIntro && safeStep === 0 && <TopicStep topic={topic} setTopic={setTopic} onNext={goNext} onLoadExample={loadExample} />}
         {!showIntro && safeStep === 1 && <ConstructsStep topic={topic} constructs={constructs} setConstructs={setConstructs} onBack={goBack} onNext={goNext} />}
         {!showIntro && safeStep === 2 && <ScalesStep topic={topic} constructs={constructs} scaleChoices={scaleChoices} setScaleChoices={setScaleChoices} onBack={goBack} onNext={goNext} />}
