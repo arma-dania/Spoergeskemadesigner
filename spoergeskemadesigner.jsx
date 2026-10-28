@@ -797,7 +797,7 @@ function TopicStep({ topic, setTopic, onNext, onLoadExample }) {
               Forskningsspørgsmål — udledt af formålet
             </label>
             <p className="text-xs mb-3" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif' }}>
-              Det overordnede empiriske spørgsmål, der oversætter formålet til noget undersøgelsen kan besvare.
+              Det overordnede empiriske spørgsmål, der oversætter formålet til noget undersøgelsen kan besvare. Det er ikke det samme som problemformuleringen: Problemformuleringen gælder hele opgaven, mens forskningsspørgsmålet er den del, spørgeskemaet skal kunne besvare.
             </p>
             <textarea
               value={topic.research_question}
@@ -2034,13 +2034,12 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
   body { font-family: Georgia, 'Times New Roman', serif; color: #1a2332; line-height: 1.55; font-size: 11pt; max-width: 720px; margin: 0 auto; padding: 24pt; }
 
   .header { margin-bottom: 18pt; padding-bottom: 12pt; border-bottom: 1pt solid #d6cfc1; }
-  h1 { font-size: 24pt; font-weight: normal; margin: 0 0 4pt 0; letter-spacing: -0.01em; }
+  /* h1-h3 bliver til Words indbyggede typografier Overskrift 1-3 */
+  h1 { font-family: Georgia, serif; font-size: 24pt; font-weight: normal; color: #1a2332; margin: 0 0 4pt 0; }
+  h2 { font-family: Georgia, serif; font-size: 16pt; font-weight: normal; color: #7a2e3d; margin: 24pt 0 10pt 0; page-break-after: avoid; }
+  h3 { font-family: Calibri, Helvetica, sans-serif; font-size: 11.5pt; font-weight: bold; color: #1a2332; margin: 14pt 0 4pt 0; page-break-after: avoid; }
   .subtitle { color: #6b6557; font-style: italic; margin: 0; font-size: 10.5pt; }
 
-  .section-heading { font-family: Calibri, Helvetica, sans-serif; font-size: 9pt; color: #7a2e3d; text-transform: uppercase; letter-spacing: 0.2em; margin: 22pt 0 14pt 0; font-weight: bold; }
-  .subsection-heading { font-family: Calibri, Helvetica, sans-serif; font-size: 8pt; color: #6b6557; text-transform: uppercase; letter-spacing: 0.18em; margin: 16pt 0 10pt 0; font-weight: bold; }
-
-  .meta { font-family: Calibri, Helvetica, sans-serif; font-size: 8pt; color: #6b6557; text-transform: uppercase; letter-spacing: 0.18em; margin: 0 0 4pt 0; font-weight: bold; }
   .research-section .field { margin-bottom: 12pt; }
   .research-question { font-style: italic; font-size: 12pt; margin: 0; line-height: 1.5; }
   .context-line { margin: 0; font-size: 10.5pt; line-height: 1.5; }
@@ -2086,39 +2085,39 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
     <p class="subtitle">Genereret til pilottest</p>
   </div>
 
-  <p class="section-heading">Opsummering</p>
+  <h2>Opsummering</h2>
 
   <div class="research-section">
     <div class="field">
-      <p class="meta">Forskningsspørgsmål</p>
-      <p class="research-question">${escape(topic.research_question)}</p>
-    </div>
-    <div class="field">
-      <p class="meta">Formål</p>
+      <h3>Formål</h3>
       <p class="context-line">${escape(topic.purpose)}</p>
     </div>
+    <div class="field">
+      <h3>Forskningsspørgsmål</h3>
+      <p class="research-question">${escape(topic.research_question)}</p>
+    </div>
     ${topic.target_group ? `<div class="field">
-      <p class="meta">Målgruppe</p>
+      <h3>Målgruppe</h3>
       <p class="context-line">${escape(topic.target_group)}</p>
     </div>` : ''}
   </div>
 
-  <p class="subsection-heading">Designgrundlag — emner og skalavalg</p>
+  <h3>Designgrundlag — emner og skalavalg</h3>
   ${designHtml}
 
   <div class="divider-strong"></div>
 
-  <p class="section-heading">Spørgeskema</p>
+  <h2>Spørgeskema</h2>
 
   ${questionsHtml}
 
   <div class="divider-strong"></div>
-  <p class="section-heading">Kodebog</p>
+  <h2>Kodebog</h2>
   <p class="subtitle">Samme kolonner som kodebogen på statistiksiden. Tilføj selv afledte variable, fx aldersgruppe.</p>
   ${codebookHtml}
 
   <div class="checklist">
-    <p class="meta">Tjekliste før udsendelse</p>
+    <h2>Tjekliste før udsendelse</h2>
     <ul>
       <li><em>Sprog</em> — målrettet respondenterne, ikke akademisk eller intern jargon</li>
       <li><em>Svartid</em> — under 10 minutter, mål faktisk tid på pilottest</li>
@@ -2315,18 +2314,18 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
               <div className="space-y-4 mb-7 pb-6" style={{ borderBottom: '1px solid var(--rule)' }}>
                 <div>
                   <p className="text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
-                    Forskningsspørgsmål
-                  </p>
-                  <p className="text-base" style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', color: 'var(--ink)', lineHeight: 1.55 }}>
-                    {topic.research_question}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
                     Formål
                   </p>
                   <p className="text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink)', lineHeight: 1.55 }}>
                     {topic.purpose}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--ink-soft)', fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500 }}>
+                    Forskningsspørgsmål
+                  </p>
+                  <p className="text-base" style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', color: 'var(--ink)', lineHeight: 1.55 }}>
+                    {topic.research_question}
                   </p>
                 </div>
                 {topic.target_group && (
@@ -3007,7 +3006,8 @@ function sonicWaveExample() {
   return {
     topic: {
       purpose: 'SonicWave lancerer en ny model i tre farver og skal beslutte, hvem den skal markedsføres til, og hvordan markedsføringsbudgettet skal fordeles på kanalerne.',
-      research_question: 'Hvordan kan SonicWave opnå en bedre forståelse af sine kunder gennem systematisk indsamling og analyse af data, så virksomheden kan træffe mere kvalificerede beslutninger om lanceringen af den nye model og fordelingen af markedsføringsbudgettet?',
+      // Forskningsspørgsmålet er den del af casens problemformulering, spørgeskemaet kan besvare
+      research_question: 'Hvordan køber danskere på 20-55 år trådløse højttalere, hvad foretrækker de, og hvor stor er interessen for SonicWaves nye model — og hvordan adskiller svarene sig mellem aldersgrupper og købskanaler?',
       target_group: 'Danskere på 20-55 år',
     },
     constructs, scaleChoices, questions,

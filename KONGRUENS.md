@@ -7,7 +7,7 @@
 
 **Status (oktober 2026):** Alle fundne uoverensstemmelser er rettet. Knappen *Indlæs eksempel: SonicWave* i designeren giver en kodebog, der er **ordret den samme** som kodebogen på statistiksiden (§ 01) og i `sonicwave_spoergeskema.xlsx`. Statistiksiden har én ekstra række, den afledte variabel *aldersgruppe*. Testtallene i casene er uændrede: χ² = 103,94, χ²(3) = 26,46, t = 2,68 og F = 10,17.
 
-**Udvidet (oktober 2026):** Skemaet har nu 14 spørgsmål. Spørgsmål 11–13 (købsintention, betalingsvillighed og købskriterium) er tilføjet til kundecasen med to grupper: A *Køb og adfærd* og B *Ønsker og holdninger*. Eksemplets formål og forskningsspørgsmål følger problemformuleringen på statistiksidens side *Om casen*. Kodebogens tredje kolonne hedder nu **Skalatype** begge steder.
+**Udvidet (oktober 2026):** Skemaet har nu 14 spørgsmål. Spørgsmål 11–13 (købsintention, betalingsvillighed og købskriterium) er tilføjet til kundecasen med to grupper: A *Køb og adfærd* og B *Ønsker og holdninger*. Eksemplets formål følger casen på statistiksidens side *Om casen*. Forskningsspørgsmålet er **ikke** problemformuleringen kopieret 1:1. Det er den del af problemformuleringen (underspørgsmål 1–3), spørgeskemaet kan besvare: *“Hvordan køber danskere på 20-55 år trådløse højttalere, hvad foretrækker de, og hvor stor er interessen for SonicWaves nye model — og hvordan adskiller svarene sig mellem aldersgrupper og købskanaler?”* Kodebogens tredje kolonne hedder nu **Skalatype** begge steder.
 
 ---
 
