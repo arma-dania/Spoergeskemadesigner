@@ -7,11 +7,13 @@
 
 **Status (oktober 2026):** Alle fundne uoverensstemmelser er rettet. Knappen *Indlæs eksempel: SonicWave* i designeren giver en kodebog, der er **ordret den samme** som kodebogen på statistiksiden (§ 01) og i `sonicwave_spoergeskema.xlsx`. Statistiksiden har én ekstra række, den afledte variabel *aldersgruppe*. Testtallene i casene er uændrede: χ² = 103,94, χ²(3) = 26,46, t = 2,68 og F = 10,17.
 
+**Udvidet (oktober 2026):** Skemaet har nu 14 spørgsmål. Spørgsmål 11–13 (købsintention, betalingsvillighed og købskriterium) er tilføjet til kundecasen med to grupper: A *Køb og adfærd* og B *Ønsker og holdninger*. Eksemplets formål og forskningsspørgsmål følger problemformuleringen på statistiksidens side *Om casen*. Kodebogens tredje kolonne hedder nu **Skalatype** begge steder.
+
 ---
 
 ## SonicWave-skemaet (fælles for begge sider)
 
-| # | Variabel | Spørgsmål | Skala i designeren | Måleniveau | Rute |
+| # | Variabel | Spørgsmål | Skala i designeren | Skalatype | Rute |
 |---|---|---|---|---|---|
 | 1 | `alder` | Hvor gammel er du? | Talsvar (år) | Ratio | **Screening:** under 20 eller over 55 → skemaet slutter |
 | 2 | `foretrukken_farve` | SonicWaves nye model kommer i tre farver. Hvilken foretrækker du? | MC (ét svar) | Nominal | |
@@ -21,7 +23,10 @@
 | 6 | `ordreværdi` | Hvad betalte du for din SonicWave? (kr.) | Talsvar (kr.) | Ratio | Kun hvis «Ja» til 3 |
 | 7 | `tilfredshed` | Hvor tilfreds er du alt i alt med din SonicWave? (1–10) | Numerisk (1–10) | Interval* | Kun hvis «Ja» til 3 |
 | 8–10 | `q1`–`q3` | “SonicWave har god lydkvalitet” · “… er pengene værd” · “… er for dyr” (negativt formuleret) | Likert 5 + Ved ikke | Ordinal (Likert) | Ét emne med tre udsagn (indeks = niveau 2) |
-| 11 | `køn` | Hvad er dit køn? | MC (ét svar) | Nominal | Kvinde · Mand · Vil ikke oplyse |
+| 11 | `købsintention` | SonicWaves nye model kommer på markedet næste år. Hvor sandsynligt er det, at du køber den inden for det første år? | Sandsynlighedsskala (1–5 + Ved ikke) | Ordinal | Alle (gruppe A) |
+| 12 | `betalingsvillighed` | Hvad vil du højst betale for en trådløs højttaler? (kr.) | Talsvar (kr.) | Ratio | Alle (gruppe A) |
+| 13 | `købskriterium` | Hvad er vigtigst for dig, når du køber en højttaler? | MC (ét svar) | Nominal | Lydkvalitet · Pris · Design · Batteritid · Mærke (gruppe B) |
+| 14 | `køn` | Hvad er dit køn? | MC (ét svar) | Nominal | Kvinde · Mand · Vil ikke oplyse |
 
 \* Tilfredshed 1–10 er strengt taget ordinal, men behandles som interval. Det står på begge sider.
 

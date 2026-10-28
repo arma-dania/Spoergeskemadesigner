@@ -291,7 +291,7 @@ function codesText(scale, q) {
 }
 
 // Kodebog med samme kolonner som kodebogen på statistiksiden
-const CODEBOOK_HEAD = ['Variabel', 'Spørgsmål', 'Måleniveau', 'Koder', 'Manglende'];
+const CODEBOOK_HEAD = ['Variabel', 'Spørgsmål', 'Skalatype', 'Koder', 'Manglende'];
 function buildCodebook(constructs, scaleChoices, questions) {
   const numbers = questionNumbers(constructs, scaleChoices, questions);
   const rows = [['id', 'Respondentens løbenummer', 'Nominal (id)', 'Heltal', '—']];
@@ -2944,7 +2944,7 @@ function ClipboardMark({ size = 96 }) {
 // ============================================================================
 
 function sonicWaveExample() {
-  const C = { alder: 1, farve: 2, ejer: 3, linje: 4, kanal: 5, ordre: 6, tilfreds: 7, holdning: 8, koen: 9 };
+  const C = { alder: 1, farve: 2, ejer: 3, linje: 4, kanal: 5, ordre: 6, tilfreds: 7, holdning: 8, intention: 10, wtp: 11, kriterium: 12, koen: 9 };
   const filter = { sourceId: C.ejer, answer: 'Ja' };
   const constructs = [
     { id: C.alder, name: 'Alder', type: 'demografi', varName: 'alder', isScreening: true, screeningRule: 'under 20 eller over 55',
@@ -2963,6 +2963,12 @@ function sonicWaveExample() {
       definition: 'Kundens samlede vurdering af sin SonicWave-højttaler.' },
     { id: C.holdning, name: 'Holdning til SonicWave', type: 'holdning', varName: 'holdning', isScreening: false,
       definition: 'Respondentens vurdering af SonicWave som brand: lydkvalitet og forholdet mellem pris og værdi.' },
+    { id: C.intention, name: 'Købsintention', type: 'intention', varName: 'købsintention', isScreening: false,
+      definition: 'Hvor sandsynligt det er, at respondenten køber den nye model inden for det første år. Bruges til at vurdere markedspotentialet.' },
+    { id: C.wtp, name: 'Betalingsvillighed', type: 'intention', varName: 'betalingsvillighed', isScreening: false,
+      definition: 'Det højeste beløb i kroner, respondenten vil betale for en trådløs højttaler.' },
+    { id: C.kriterium, name: 'Købskriterium', type: 'holdning', varName: 'købskriterium', isScreening: false,
+      definition: 'Den egenskab, der vejer tungest, når respondenten køber en højttaler.' },
     { id: C.koen, name: 'Køn', type: 'demografi', varName: 'køn', isScreening: false,
       definition: 'Respondentens køn. Bruges til at beskrive stikprøven.' },
   ];
@@ -2976,6 +2982,9 @@ function sonicWaveExample() {
     [C.ordre]: scale('talsvar', 'Et beløb i kroner er et præcist tal med et naturligt nulpunkt - ratiodata.'),
     [C.tilfreds]: scale('numerisk10', 'Ti trin giver nok nuancer til at fange forskelle i tilfredshed.'),
     [C.holdning]: scale('likert5', 'Påstande om brandet måles bedst som grad af enighed.'),
+    [C.intention]: scale('sandsynlighed', 'Købsintention er en fremtidig handling, så den måles som sandsynlighed. Ordinale data.'),
+    [C.wtp]: scale('talsvar', 'Et beløb i kroner er et præcist tal med et naturligt nulpunkt - ratiodata.'),
+    [C.kriterium]: scale('mc_single', 'Respondenten vælger det ene vigtigste kriterium. Kriterierne har ingen rækkefølge - nominale data.'),
     [C.koen]: scale('mc_single', 'Nominal baggrundsvariabel med mulighed for ikke at oplyse.'),
   };
   const questions = {
@@ -2990,12 +2999,15 @@ function sonicWaveExample() {
       { text: 'SonicWave-højttalere er pengene værd', varName: 'q2_pengene_værd' },
       { text: 'SonicWave er for dyr', reversed: true, varName: 'q3_for_dyr' },
     ] },
+    [C.intention]: { text: 'SonicWaves nye model kommer på markedet næste år. Hvor sandsynligt er det, at du køber den inden for det første år?' },
+    [C.wtp]: { text: 'Hvad vil du højst betale for en trådløs højttaler? (kr.)', options: 'Kroner' },
+    [C.kriterium]: { text: 'Hvad er vigtigst for dig, når du køber en højttaler?', options: 'Lydkvalitet\nPris\nDesign\nBatteritid\nMærke' },
     [C.koen]: { text: 'Hvad er dit køn?', options: 'Kvinde\nMand\nVil ikke oplyse' },
   };
   return {
     topic: {
-      purpose: 'SonicWave skal beslutte, hvilke farver den nye højttalermodel skal markedsføres i over for hvilke aldersgrupper, og hvilke salgskanaler og produktlinjer der skal prioriteres.',
-      research_question: 'Hænger foretrukken farve sammen med alder, og er der forskel på ordreværdi mellem købskanaler og på tilfredshed mellem produktlinjer?',
+      purpose: 'SonicWave lancerer en ny model i tre farver og skal beslutte, hvem den skal markedsføres til, og hvordan markedsføringsbudgettet skal fordeles på kanalerne.',
+      research_question: 'Hvordan kan SonicWave opnå en bedre forståelse af sine kunder gennem systematisk indsamling og analyse af data, så virksomheden kan træffe mere kvalificerede beslutninger om lanceringen af den nye model og fordelingen af markedsføringsbudgettet?',
       target_group: 'Danskere på 20-55 år',
     },
     constructs, scaleChoices, questions,
