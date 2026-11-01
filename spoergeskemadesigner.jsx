@@ -284,6 +284,7 @@ function codesText(scale, q) {
   if (['talsvar', 'semantisk', 'numerisk', 'numerisk10'].includes(scale.id) && custom) return custom.replace(/\n/g, ' ');
   if (scale.id === 'aaben') return 'Fri tekst';
   const opts = scale.responseOptions;
+  if (scale.id === 'frekvens_konkret') return opts.join(' · ');
   const labelled = opts.filter(o => /^\d+ /.test(o)).map(o => o.replace(/^(\d+) /, '$1 = '));
   const extra = opts.filter(o => !/^\d/.test(o));
   if (labelled.length) return [`${labelled[0]} … ${labelled[labelled.length - 1]}`, ...extra].join(' · ');
@@ -302,8 +303,9 @@ function buildCodebook(constructs, scaleChoices, questions) {
     const level = scale ? (scale.codebookLevel || scale.measurement.charAt(0).toUpperCase() + scale.measurement.slice(1)) : '?';
     const codes = codesText(scale, q);
     const opts = scale ? (displayOptions(scale, q) || []) : [];
-    const missing = c.filter ? 'Tom = ikke relevant (springlogik)'
-      : opts.some(o => /ved ikke/i.test(o)) ? '99 = Ved ikke → tom' : 'Tom';
+    const dontKnow = opts.some(o => /ved ikke/i.test(o));
+    const missing = c.filter ? `Tom = ikke relevant (springlogik)${dontKnow ? ' · 99 = Ved ikke → tom' : ''}`
+      : dontKnow ? '99 = Ved ikke → tom' : 'Tom';
     itemsOf(c, scaleChoices, questions).forEach((it, k) => {
       const statement = STATEMENT_SCALES.has(scale?.id);
       let text = `${numbers[c.id][k]}. ${statement ? `“${it.text}”` : it.text}`;
@@ -757,13 +759,13 @@ function TopicStep({ topic, setTopic, onNext, onLoadExample }) {
 
       <div className="mb-10 p-5 flex flex-wrap items-center gap-4" style={{ backgroundColor: 'var(--paper-warm)', border: '1px dashed var(--rule)' }}>
         <div className="flex-1" style={{ minWidth: '240px' }}>
-          <p className="text-sm" style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, color: 'var(--ink)' }}>Se et færdigt eksempel: SonicWave</p>
+          <p className="text-sm" style={{ fontFamily: 'Fraunces, serif', fontWeight: 500, color: 'var(--ink)' }}>Se et færdigt eksempel: SonicWaves webshopundersøgelse</p>
           <p className="text-xs mt-1" style={{ fontFamily: 'IBM Plex Sans, sans-serif', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-            Højttalerproducenten SonicWave er casen i den kvantitative metode. Eksemplet viser alle seks trin med screening, springlogik og kodebog — det samme skema, som datasættet på statistiksiden kommer fra.
+            SonicWaves undersøgelse af webshoppen fra sidste år. Eksemplet viser alle seks trin med screening, springlogik, et indeks og kodebog — det samme skema, som eksempeldataene på statistiksiden kommer fra.
           </p>
         </div>
         <button onClick={onLoadExample} className="px-4 py-2 text-sm" style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--ink)', backgroundColor: 'transparent' }}>
-          Indlæs eksempel: SonicWave
+          Indlæs eksemplet
         </button>
       </div>
 
@@ -2648,12 +2650,12 @@ function IntroReorder() {
     return () => clearTimeout(t);
   }, [reduce]);
   const items = [
-    { id: 'koen', label: 'Hvad er dit køn?', tag: 'demografi' },
-    { id: 'farve', label: 'Hvilken farve foretrækker du?', tag: '' },
-    { id: 'alder', label: 'Hvor gammel er du?', tag: 'SCREENING' },
-    { id: 'ejer', label: 'Ejer du en SonicWave?', tag: 'filter' },
+    { id: 'region', label: 'I hvilken region bor du?', tag: 'demografi' },
+    { id: 'hoert', label: 'Hvor hørte du om SonicWave?', tag: '' },
+    { id: 'voksen', label: 'Er du fyldt 18 år?', tag: 'SCREENING' },
+    { id: 'koebt', label: 'Har du købt i webshoppen?', tag: 'filter' },
   ];
-  const order = sorted ? ['alder', 'farve', 'ejer', 'koen'] : items.map(i => i.id);
+  const order = sorted ? ['voksen', 'hoert', 'koebt', 'region'] : items.map(i => i.id);
   return (
     <div className="relative mx-auto" style={{ height: `${items.length * 52}px`, maxWidth: '26rem' }}>
       {items.map(it => {
@@ -2679,12 +2681,12 @@ const INTRO_SCENES = [
       <div className="flex flex-col items-center gap-3 w-full" style={{ maxWidth: '30rem' }}>
         <Anim className="w-full p-4" style={{ backgroundColor: 'var(--paper)', borderLeft: '3px solid var(--accent)' }}>
           <div className="text-xs uppercase tracking-wider mb-1" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Formål · beslutning</div>
-          <div className="text-base" style={{ ...introSerif, color: 'var(--ink)' }}><Words text="Hvilke farver skal SonicWaves nye højttaler markedsføres i — og til hvem?" start={0.3} /></div>
+          <div className="text-base" style={{ ...introSerif, color: 'var(--ink)' }}><Words text="Hvad skal SonicWave forbedre først i webshoppen?" start={0.3} /></div>
         </Anim>
         <Anim delay={1.6} kind="introFade" className="text-xl" style={{ color: 'var(--ink-soft)' }}>↓</Anim>
         <Anim delay={1.9} className="w-full p-4" style={{ backgroundColor: 'var(--paper)', borderLeft: '3px solid var(--ink)' }}>
           <div className="text-xs uppercase tracking-wider mb-1" style={{ ...introFont, color: 'var(--ink-soft)', fontWeight: 600 }}>Forskningsspørgsmål</div>
-          <div className="text-base" style={{ ...introSerif, color: 'var(--ink)', fontStyle: 'italic' }}><Words text="Hænger foretrukken farve sammen med alder?" start={2.1} /></div>
+          <div className="text-base" style={{ ...introSerif, color: 'var(--ink)', fontStyle: 'italic' }}><Words text="Er oplevelsen af webshoppen forskellig for nye og faste kunder?" start={2.1} /></div>
         </Anim>
       </div>
     ),
@@ -2695,15 +2697,15 @@ const INTRO_SCENES = [
     render: () => (
       <div className="flex flex-col items-center gap-4 w-full">
         <Anim className="px-4 py-2 text-sm" style={{ ...introSerif, fontStyle: 'italic', color: 'var(--ink)', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
-          Hænger foretrukken farve sammen med alder?
+          Er oplevelsen af webshoppen forskellig for nye og faste kunder?
         </Anim>
         <div className="flex flex-wrap justify-center gap-3">
-          <Anim delay={0.8} kind="introPop"><IntroChip label="Alder" type="demografi" /></Anim>
-          <Anim delay={1.2} kind="introPop"><IntroChip label="Foretrukken farve" type="holdning" /></Anim>
-          <Anim delay={1.6} kind="introPop"><IntroChip label="Ejer en SonicWave" type="adfærd" /></Anim>
+          <Anim delay={0.8} kind="introPop"><IntroChip label="Købt i webshoppen" type="adfærd" /></Anim>
+          <Anim delay={1.2} kind="introPop"><IntroChip label="Kundetype" type="adfærd" /></Anim>
+          <Anim delay={1.6} kind="introPop"><IntroChip label="Vurdering af webshoppen" type="holdning" /></Anim>
         </div>
         <Anim delay={2.4} kind="introFade" className="text-xs text-center" style={{ ...introFont, color: 'var(--ink-soft)', maxWidth: '26rem' }}>
-          Operationalisering: Hvad betyder emnet helt konkret? Fx “alder i hele år”.
+          Operationalisering: Hvad betyder emnet helt konkret? Fx “ny kunde = første køb i webshoppen”.
         </Anim>
       </div>
     ),
@@ -2714,9 +2716,9 @@ const INTRO_SCENES = [
     render: () => (
       <div className="flex flex-wrap justify-center gap-4 w-full">
         {[
-          ['Alder', 'demografi', 'Talsvar', 'ratio'],
-          ['Foretrukken farve', 'holdning', 'Multiple choice', 'nominal'],
-          ['Ejer en SonicWave', 'adfærd', 'Ja / Nej', 'nominal'],
+          ['Købt i webshoppen', 'adfærd', 'Ja / Nej', 'nominal'],
+          ['Kundetype', 'adfærd', 'Multiple choice', 'nominal'],
+          ['Vurdering af webshoppen', 'holdning', 'Numerisk 1–10', 'interval'],
         ].map(([label, type, scale, level], i) => (
           <div key={label} className="flex flex-col items-center gap-2">
             <IntroChip label={label} type={type} />
@@ -2733,9 +2735,9 @@ const INTRO_SCENES = [
     render: () => (
       <div className="w-full p-5" style={{ maxWidth: '30rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
         <div className="text-base mb-3" style={{ ...introSerif, color: 'var(--ink)' }}>
-          <Words text="SonicWaves nye model kommer i tre farver. Hvilken foretrækker du?" start={0.2} step={0.08} />
+          <Words text="Var det første gang, du købte i SonicWaves webshop?" start={0.2} step={0.08} />
         </div>
-        {['Sort', 'Hvid', 'Sand'].map((o, i) => (
+        {['Ny kunde (første køb)', 'Fast kunde (har købt før)'].map((o, i) => (
           <Anim key={o} delay={1.5 + i * 0.25} kind="introSlideIn" className="flex items-center gap-2 text-sm mb-1.5" style={{ ...introFont, color: 'var(--ink)' }}>
             <span style={{ width: 12, height: 12, borderRadius: '50%', border: '1.5px solid var(--ink-soft)', display: 'inline-block' }} /> {o}
           </Anim>
@@ -2759,7 +2761,7 @@ const INTRO_SCENES = [
       <div className="flex flex-wrap justify-center items-start gap-5 w-full">
         <Anim className="p-4" style={{ width: '14rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)', boxShadow: '0 2px 6px rgba(26,35,50,0.08)' }}>
           <div className="text-xs uppercase tracking-wider mb-2" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Spørgeskema</div>
-          {['Hvor gammel er du?', 'Hvilken farve …?', 'Ejer du en …?', 'Hvad er dit køn?'].map((q, i) => (
+          {['Er du fyldt 18 år?', 'Hvor hørte du om …?', 'Har du købt i …?', 'I hvilken region …?'].map((q, i) => (
             <Anim key={q} delay={0.4 + i * 0.25} kind="introSlideIn" className="text-xs mb-1.5" style={{ ...introSerif, color: 'var(--ink)' }}>
               <span style={{ color: 'var(--accent)' }}>{String(i + 1).padStart(2, '0')}.</span> {q}
             </Anim>
@@ -2768,7 +2770,7 @@ const INTRO_SCENES = [
         <Anim delay={1.6} kind="introFade" className="self-center text-xl" style={{ color: 'var(--ink-soft)' }}>→</Anim>
         <Anim delay={1.8} className="p-4" style={{ width: '15rem', backgroundColor: 'var(--paper)', border: '1px solid var(--rule)' }}>
           <div className="text-xs uppercase tracking-wider mb-2" style={{ ...introFont, color: 'var(--accent)', fontWeight: 600 }}>Kodebog</div>
-          {[['alder', 'Ratio'], ['foretrukken_farve', 'Nominal'], ['ejer_produkt', 'Nominal'], ['køn', 'Nominal']].map(([v, l], i) => (
+          {[['over_18', 'Nominal'], ['hørt_om', 'Nominal'], ['købt_webshop', 'Nominal'], ['region', 'Nominal']].map(([v, l], i) => (
             <Anim key={v} delay={2.1 + i * 0.2} kind="introFade" className="flex justify-between text-xs py-0.5" style={{ ...introFont, borderBottom: '1px solid var(--rule)' }}>
               <span style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace', color: 'var(--accent)' }}>{v}</span>
               <span style={{ color: 'var(--ink-soft)' }}>{l}</span>
@@ -2848,7 +2850,7 @@ function IntroPage({ onStart, onLoadExample, onRestart, hasWork }) {
   const howTo = [
     ['Start med formålet.', 'Hvilken beslutning skal undersøgelsen hjælpe med? Resten udledes derfra.'],
     ['Brug feedbacken som sparring.', 'De automatiske advarsler og AI-feedbacken peger på svagheder — men det er dig, der beslutter.'],
-    ['Kig på eksemplet.', 'SonicWave-eksemplet viser alle seks trin færdige. Det er det samme skema, som datasættet på statistiksiden kommer fra.'],
+    ['Kig på eksemplet.', 'Eksemplet, SonicWaves webshopundersøgelse, viser alle seks trin færdige. Det er det samme skema, som eksempeldataene på statistiksiden kommer fra.'],
     ['Niveau 2 er valgfrit.', 'Bokse mærket “Niveau 2” går et skridt videre (fx indeks af flere udsagn). Du skal ikke bruge dem.'],
     ['Dit arbejde gemmes.', 'Alt gemmes automatisk i browseren. Hent udkastet, når du er færdig, og pilottest det på 3–5 personer.'],
   ];
@@ -2877,7 +2879,7 @@ function IntroPage({ onStart, onLoadExample, onRestart, hasWork }) {
 
       <h2 className="mb-2" style={{ ...introSerif, fontSize: '1.5rem', fontWeight: 500, color: 'var(--ink)' }}>De seks trin</h2>
       <p className="text-sm mb-5 max-w-2xl" style={{ ...introFont, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-        Animationen følger SonicWave-casen gennem alle seks trin. Klik på et trin for at hoppe, eller sæt den på pause.
+        Animationen følger eksemplet, SonicWaves webshopundersøgelse, gennem alle seks trin. Klik på et trin for at hoppe, eller sæt den på pause.
       </p>
       <StepsAnimation />
 
@@ -2908,7 +2910,7 @@ function IntroPage({ onStart, onLoadExample, onRestart, hasWork }) {
           {hasWork ? 'Fortsæt dit skema →' : 'Start dit eget skema →'}
         </button>
         <button onClick={onLoadExample} className="px-5 py-2.5 text-sm" style={{ ...introFont, fontWeight: 500, color: 'var(--ink)', border: '1px solid var(--ink)' }}>
-          Se SonicWave-eksemplet
+          Se eksemplet
         </button>
         {hasWork && (
           <button onClick={onRestart} className="px-5 py-2.5 text-sm" style={{ ...introFont, color: 'var(--ink-soft)' }}>
@@ -2937,78 +2939,72 @@ function ClipboardMark({ size = 96 }) {
 }
 
 // ============================================================================
-// EKSEMPEL: SONICWAVE
-// Samme spørgsmål, rækkefølge, måleniveauer og koder som kodebogen på
-// statistiksiden (arma-dania/tests, § 01). Ændres det ene, skal det andet følge med.
+// EKSEMPEL: SONICWAVES WEBSHOPUNDERSØGELSE (sidste år)
+// Samme spørgsmål, rækkefølge, skalatyper og koder som eksempelkodebogen på
+// statistiksiden (arma-dania/tests). Ændres det ene, skal det andet følge med.
+// Eksemplet bruger bevidst andre spørgsmål end holdets SonicWave-skema, så det
+// viser metoden uden at løse de studerendes opgaver.
 // ============================================================================
 
-function sonicWaveExample() {
-  const C = { alder: 1, farve: 2, ejer: 3, linje: 4, kanal: 5, ordre: 6, tilfreds: 7, holdning: 8, intention: 10, wtp: 11, kriterium: 12, koen: 9 };
-  const filter = { sourceId: C.ejer, answer: 'Ja' };
+function webshopExample() {
+  const C = { voksen: 1, hoert: 2, lyt: 3, koebt: 4, kunde: 5, minutter: 6, vurdering: 7, oplevelse: 8, forbrug: 9, region: 10 };
+  const filter = { sourceId: C.koebt, answer: 'Ja' };
   const constructs = [
-    { id: C.alder, name: 'Alder', type: 'demografi', varName: 'alder', isScreening: true, screeningRule: 'under 20 eller over 55',
-      definition: 'Respondentens alder i hele år. Afgør, om personen er i målgruppen (20-55 år), og bruges til at danne aldersgrupper i analysen.' },
-    { id: C.farve, name: 'Foretrukken farve', type: 'holdning', varName: 'foretrukken_farve', isScreening: false,
-      definition: 'Hvilken af den nye models tre farver respondenten foretrækker til en højttaler.' },
-    { id: C.ejer, name: 'Ejer en SonicWave', type: 'adfaerd', varName: 'ejer_produkt', isScreening: false,
-      definition: 'Om respondenten ejer en SonicWave-højttaler i dag. Afgør, hvem der får spørgsmålene om køb og tilfredshed.' },
-    { id: C.linje, name: 'Produktlinje', type: 'adfaerd', varName: 'produktlinje', isScreening: false, filter,
-      definition: 'Hvilken af SonicWaves fire produktlinjer kunden ejer.' },
-    { id: C.kanal, name: 'Købskanal', type: 'adfaerd', varName: 'kanal', isScreening: false, filter,
-      definition: 'Den kanal, kunden købte sin SonicWave igennem.' },
-    { id: C.ordre, name: 'Ordreværdi', type: 'adfaerd', varName: 'ordreværdi', isScreening: false, filter,
-      definition: 'Det beløb i kroner, kunden betalte for sin SonicWave.' },
-    { id: C.tilfreds, name: 'Tilfredshed', type: 'holdning', varName: 'tilfredshed', isScreening: false, filter,
-      definition: 'Kundens samlede vurdering af sin SonicWave-højttaler.' },
-    { id: C.holdning, name: 'Holdning til SonicWave', type: 'holdning', varName: 'holdning', isScreening: false,
-      definition: 'Respondentens vurdering af SonicWave som brand: lydkvalitet og forholdet mellem pris og værdi.' },
-    { id: C.intention, name: 'Købsintention', type: 'intention', varName: 'købsintention', isScreening: false,
-      definition: 'Hvor sandsynligt det er, at respondenten køber den nye model inden for det første år. Bruges til at vurdere markedspotentialet.' },
-    { id: C.wtp, name: 'Betalingsvillighed', type: 'intention', varName: 'betalingsvillighed', isScreening: false,
-      definition: 'Det højeste beløb i kroner, respondenten vil betale for en trådløs højttaler.' },
-    { id: C.kriterium, name: 'Købskriterium', type: 'holdning', varName: 'købskriterium', isScreening: false,
-      definition: 'Den egenskab, der vejer tungest, når respondenten køber en højttaler.' },
-    { id: C.koen, name: 'Køn', type: 'demografi', varName: 'køn', isScreening: false,
-      definition: 'Respondentens køn. Bruges til at beskrive stikprøven.' },
+    { id: C.voksen, name: 'Voksen (18+)', type: 'demografi', varName: 'over_18', isScreening: true, screeningRule: 'svarer Nej',
+      definition: 'Om respondenten er 18 år eller ældre. Afgør, om personen er i målgruppen.' },
+    { id: C.hoert, name: 'Hørt om SonicWave', type: 'adfaerd', varName: 'hørt_om', isScreening: false,
+      definition: 'Hvor respondenten første gang hørte om SonicWave. Viser, hvilke kanaler der skaber kendskab.' },
+    { id: C.lyt, name: 'Lyttevaner', type: 'adfaerd', varName: 'lyttefrekvens', isScreening: false,
+      definition: 'Hvor mange gange respondenten har lyttet til musik på en højttaler den seneste uge.' },
+    { id: C.koebt, name: 'Købt i webshoppen', type: 'adfaerd', varName: 'købt_webshop', isScreening: false,
+      definition: 'Om respondenten har købt i SonicWaves webshop det seneste år. Afgør, hvem der får spørgsmålene om webshoppen.' },
+    { id: C.kunde, name: 'Kundetype', type: 'adfaerd', varName: 'kundetype', isScreening: false, filter,
+      definition: 'Om kunden handlede i webshoppen for første gang (ny) eller har købt før (fast).' },
+    { id: C.minutter, name: 'Tid i webshoppen', type: 'adfaerd', varName: 'minutter', isScreening: false, filter,
+      definition: 'Antal minutter, kunden brugte i webshoppen ved sit seneste køb.' },
+    { id: C.vurdering, name: 'Vurdering af webshoppen', type: 'holdning', varName: 'vurdering', isScreening: false, filter,
+      definition: 'Kundens samlede vurdering af webshoppen.' },
+    { id: C.oplevelse, name: 'Oplevelse af webshoppen', type: 'holdning', varName: 'oplevelse', isScreening: false, filter,
+      definition: 'Kundens oplevelse af at finde varer, leveringen og overskueligheden i webshoppen.' },
+    { id: C.forbrug, name: 'Forbrug på elektronik', type: 'adfaerd', varName: 'forbrug_elektronik', isScreening: false,
+      definition: 'Det samlede beløb i kroner, respondenten har brugt på elektronik det seneste år.' },
+    { id: C.region, name: 'Region', type: 'demografi', varName: 'region', isScreening: false,
+      definition: 'Den region, respondenten bor i. Bruges til at beskrive stikprøven.' },
   ];
   const scale = (scaleId, justification) => ({ scaleId, justification });
   const scaleChoices = {
-    [C.alder]: scale('talsvar', 'Præcis alder kan bruges til screening og kan bagefter inddeles i aldersgrupper.'),
-    [C.farve]: scale('mc_single', 'Respondenten vælger én af tre farver, der ikke har nogen rækkefølge - nominale data.'),
-    [C.ejer]: scale('mc_single', 'Ja/nej-spørgsmål, der styrer springlogikken.'),
-    [C.linje]: scale('mc_single', 'Kunden ejer én af fire produktlinjer, så der skal kun vælges ét svar.'),
-    [C.kanal]: scale('mc_single', 'Kunden har købt sin højttaler ét sted, så der skal kun vælges ét svar.'),
-    [C.ordre]: scale('talsvar', 'Et beløb i kroner er et præcist tal med et naturligt nulpunkt - ratiodata.'),
-    [C.tilfreds]: scale('numerisk10', 'Ti trin giver nok nuancer til at fange forskelle i tilfredshed.'),
-    [C.holdning]: scale('likert5', 'Påstande om brandet måles bedst som grad af enighed.'),
-    [C.intention]: scale('sandsynlighed', 'Købsintention er en fremtidig handling, så den måles som sandsynlighed. Ordinale data.'),
-    [C.wtp]: scale('talsvar', 'Et beløb i kroner er et præcist tal med et naturligt nulpunkt - ratiodata.'),
-    [C.kriterium]: scale('mc_single', 'Respondenten vælger det ene vigtigste kriterium. Kriterierne har ingen rækkefølge - nominale data.'),
-    [C.koen]: scale('mc_single', 'Nominal baggrundsvariabel med mulighed for ikke at oplyse.'),
+    [C.voksen]: scale('mc_single', 'Ja/nej-spørgsmål, der frasorterer personer under 18 år.'),
+    [C.hoert]: scale('mc_single', 'Respondenten vælger én kanal. Kanalerne har ingen rækkefølge - nominale data.'),
+    [C.lyt]: scale('frekvens_konkret', 'Konkrete antal gange inden for en bestemt periode er lettere at svare præcist på end “ofte” og “sjældent”. Intervallerne har en rækkefølge - ordinale data.'),
+    [C.koebt]: scale('mc_single', 'Ja/nej-spørgsmål, der styrer springlogikken.'),
+    [C.kunde]: scale('mc_single', 'To kategorier uden rækkefølge, så der skal kun vælges ét svar.'),
+    [C.minutter]: scale('talsvar', 'Et præcist antal minutter har et naturligt nulpunkt - ratiodata.'),
+    [C.vurdering]: scale('numerisk10', 'Ti trin giver nok nuancer til at fange forskelle i vurderingen.'),
+    [C.oplevelse]: scale('likert5', 'Påstande om oplevelsen måles bedst som grad af enighed.'),
+    [C.forbrug]: scale('talsvar', 'Et beløb i kroner er et præcist tal med et naturligt nulpunkt - ratiodata.'),
+    [C.region]: scale('mc_single', 'Nominal baggrundsvariabel med fem regioner.'),
   };
   const questions = {
-    [C.alder]: { text: 'Hvor gammel er du?', options: 'År (20–55)' },
-    [C.farve]: { text: 'SonicWaves nye model kommer i tre farver. Hvilken foretrækker du?', options: 'Sort\nHvid\nSand' },
-    [C.ejer]: { text: 'Ejer du en SonicWave-højttaler?', options: 'Ja\nNej' },
-    [C.linje]: { text: 'Hvilken produktlinje ejer du?', options: 'Classic\nPremium\nSport\nMini' },
-    [C.kanal]: { text: 'Hvor købte du din SonicWave?', options: 'Instagram\nFacebook\nGoogle\nTikTok\nButik' },
-    [C.ordre]: { text: 'Hvad betalte du for din SonicWave? (kr.)', options: 'Kroner' },
-    [C.tilfreds]: { text: 'Hvor tilfreds er du alt i alt med din SonicWave? (1–10)', options: '1 = Meget utilfreds … 10 = Meget tilfreds' },
-    [C.holdning]: { text: 'SonicWave har god lydkvalitet', varName: 'q1_lydkvalitet', extraItems: [
-      { text: 'SonicWave-højttalere er pengene værd', varName: 'q2_pengene_værd' },
-      { text: 'SonicWave er for dyr', reversed: true, varName: 'q3_for_dyr' },
+    [C.voksen]: { text: 'Er du fyldt 18 år?', options: 'Ja\nNej' },
+    [C.hoert]: { text: 'Hvor hørte du første gang om SonicWave?', options: 'Venner og familie\nSociale medier\nSøgemaskine\nInfluencer' },
+    [C.lyt]: { text: 'Hvor mange gange har du lyttet til musik på en højttaler den seneste uge?' },
+    [C.koebt]: { text: 'Har du købt noget i SonicWaves webshop inden for det seneste år?', options: 'Ja\nNej' },
+    [C.kunde]: { text: 'Var det første gang, du købte i SonicWaves webshop?', options: 'Ny kunde (første køb)\nFast kunde (har købt før)' },
+    [C.minutter]: { text: 'Hvor mange minutter brugte du i webshoppen ved dit seneste køb?', options: 'Minutter' },
+    [C.vurdering]: { text: 'Hvordan vurderer du SonicWaves webshop alt i alt? (1–10)', options: '1 = Meget dårlig … 10 = Meget god' },
+    [C.oplevelse]: { text: 'Det var nemt at finde det, jeg søgte', varName: 'q1_nemt_at_finde', extraItems: [
+      { text: 'Leveringen var hurtig', varName: 'q2_hurtig_levering' },
+      { text: 'Webshoppen er forvirrende', reversed: true, varName: 'q3_forvirrende' },
     ] },
-    [C.intention]: { text: 'SonicWaves nye model kommer på markedet næste år. Hvor sandsynligt er det, at du køber den inden for det første år?' },
-    [C.wtp]: { text: 'Hvad vil du højst betale for en trådløs højttaler? (kr.)', options: 'Kroner' },
-    [C.kriterium]: { text: 'Hvad er vigtigst for dig, når du køber en højttaler?', options: 'Lydkvalitet\nPris\nDesign\nBatteritid\nMærke' },
-    [C.koen]: { text: 'Hvad er dit køn?', options: 'Kvinde\nMand\nVil ikke oplyse' },
+    [C.forbrug]: { text: 'Hvor meget har du i alt brugt på elektronik det seneste år? (kr.)', options: 'Kroner' },
+    [C.region]: { text: 'I hvilken region bor du?', options: 'Hovedstaden\nSjælland\nSyddanmark\nMidtjylland\nNordjylland' },
   };
   return {
     topic: {
-      purpose: 'SonicWave lancerer en ny model i tre farver og skal beslutte, hvem den skal markedsføres til, og hvordan markedsføringsbudgettet skal fordeles på kanalerne.',
-      // Forskningsspørgsmålet er den del af casens problemformulering, spørgeskemaet kan besvare
-      research_question: 'Hvordan køber danskere på 20-55 år trådløse højttalere, hvad foretrækker de, og hvor stor er interessen for SonicWaves nye model — og hvordan adskiller svarene sig mellem aldersgrupper og købskanaler?',
-      target_group: 'Danskere på 20-55 år',
+      purpose: 'SonicWave vil forbedre sin webshop og bruge markedsføringsbudgettet bedre. Undersøgelsen skal give grundlag for at beslutte, hvor annoncerne skal ligge, og hvad der skal forbedres først i webshoppen.',
+      // Forskningsspørgsmålet er den del af formålet, spørgeskemaet kan besvare
+      research_question: 'Hvor hører danskere på 18 år og derover om SonicWave, og hænger det sammen med, hvor ofte de lytter til musik? Hvordan oplever kunderne webshoppen, og er oplevelsen forskellig for nye og faste kunder?',
+      target_group: 'Danskere på 18 år og derover',
     },
     constructs, scaleChoices, questions,
   };
@@ -3113,11 +3109,11 @@ export default function App() {
   const openIntro = () => { setShowIntro(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const startFromIntro = () => { setShowIntro(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const loadExample = () => {
-    if (hasWork) askConfirm('SonicWave-eksemplet erstatter det, der står i skemaet nu.', 'Ja, indlæs eksemplet', doLoadExample);
+    if (hasWork) askConfirm('Eksemplet erstatter det, der står i skemaet nu.', 'Ja, indlæs eksemplet', doLoadExample);
     else doLoadExample();
   };
   const doLoadExample = () => {
-    const ex = sonicWaveExample();
+    const ex = webshopExample();
     setTopic(ex.topic);
     setConstructs(ex.constructs);
     setScaleChoices(ex.scaleChoices);

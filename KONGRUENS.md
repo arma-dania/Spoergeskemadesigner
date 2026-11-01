@@ -1,38 +1,47 @@
-# Kongruens: Spørgeskemadesigneren ↔ Statistiske test (SonicWave)
+# Kongruens: Spørgeskemadesigneren ↔ Statistiske test
 
 | Side | Repository | Rolle |
 |---|---|---|
 | **Spørgeskemadesigneren** | `arma-dania/Spoergeskemadesigner` (`spoergeskemadesigner.jsx`) | Kvantitativ metode, sprint 3: fra formål til spørgeskema og kodebog |
 | **Statistiske test** | `arma-dania/tests` (`statistiske_test.jsx`, `data/`) | Kvantitativ metode, sprint 3: fra datasæt til Chi², t-test og ANOVA |
 
-**Status (oktober 2026):** Alle fundne uoverensstemmelser er rettet. Knappen *Indlæs eksempel: SonicWave* i designeren giver en kodebog, der er **ordret den samme** som kodebogen på statistiksiden (§ 01) og i `sonicwave_spoergeskema.xlsx`. Statistiksiden har én ekstra række, den afledte variabel *aldersgruppe*. Testtallene i casene er uændrede: χ² = 103,94, χ²(3) = 26,46, t = 2,68 og F = 10,17.
+**Status (november 2026): to skemaer med hver sin rolle.**
 
-**Udvidet (oktober 2026):** Skemaet har nu 14 spørgsmål. Spørgsmål 11–13 (købsintention, betalingsvillighed og købskriterium) er tilføjet til kundecasen med to grupper: A *Køb og adfærd* og B *Ønsker og holdninger*. Eksemplets formål følger casen på statistiksidens side *Om casen*. Forskningsspørgsmålet er **ikke** problemformuleringen kopieret 1:1. Det er den del af problemformuleringen (underspørgsmål 1–3), spørgeskemaet kan besvare: *“Hvordan køber danskere på 20-55 år trådløse højttalere, hvad foretrækker de, og hvor stor er interessen for SonicWaves nye model — og hvordan adskiller svarene sig mellem aldersgrupper og købskanaler?”* Kodebogens tredje kolonne hedder nu **Skalatype** begge steder.
+| Skema | Rolle | Hvor |
+|---|---|---|
+| **Eksemplet: SonicWaves webshopundersøgelse** (sidste år) | Løst eksempel (modellering). Viser metoden uden at løse holdets opgaver | Designerens *Indlæs eksemplet* og eksempeldataene på statistiksiden |
+| **Holdets SonicWave-skema** (den nye model, 14 spørgsmål) | Gruppernes opgave med facit (*Tjek dine tal*) | Statistiksidens *Om casen*, kodebog og øvelsesdatasæt. Findes **ikke** i designeren — grupperne indtaster det selv |
+
+Knappen *Indlæs eksemplet* giver en kodebog, der er **ordret den samme** som eksempelkodebogen på statistiksiden.
 
 ---
 
-## SonicWave-skemaet (fælles for begge sider)
+## Eksemplet: SonicWaves webshopundersøgelse
+
+**Formål:** SonicWave vil forbedre sin webshop og bruge markedsføringsbudgettet bedre. Undersøgelsen skal give grundlag for at beslutte, hvor annoncerne skal ligge, og hvad der skal forbedres først i webshoppen.
+**Forskningsspørgsmål:** Hvor hører danskere på 18 år og derover om SonicWave, og hænger det sammen med, hvor ofte de lytter til musik? Hvordan oplever kunderne webshoppen, og er oplevelsen forskellig for nye og faste kunder?
+**Målgruppe:** Danskere på 18 år og derover
 
 | # | Variabel | Spørgsmål | Skala i designeren | Skalatype | Rute |
 |---|---|---|---|---|---|
-| 1 | `alder` | Hvor gammel er du? | Talsvar (år) | Ratio | **Screening:** under 20 eller over 55 → skemaet slutter |
-| 2 | `foretrukken_farve` | SonicWaves nye model kommer i tre farver. Hvilken foretrækker du? | MC (ét svar) | Nominal | |
-| 3 | `ejer_produkt` | Ejer du en SonicWave-højttaler? | MC (ét svar) | Nominal | **Filter:** kun «Ja» får 4–7 |
-| 4 | `produktlinje` | Hvilken produktlinje ejer du? | MC (ét svar) | Nominal | Kun hvis «Ja» til 3 |
-| 5 | `kanal` | Hvor købte du din SonicWave? | MC (ét svar) | Nominal | Kun hvis «Ja» til 3 |
-| 6 | `ordreværdi` | Hvad betalte du for din SonicWave? (kr.) | Talsvar (kr.) | Ratio | Kun hvis «Ja» til 3 |
-| 7 | `tilfredshed` | Hvor tilfreds er du alt i alt med din SonicWave? (1–10) | Numerisk (1–10) | Interval* | Kun hvis «Ja» til 3 |
-| 8–10 | `q1`–`q3` | “SonicWave har god lydkvalitet” · “… er pengene værd” · “… er for dyr” (negativt formuleret) | Likert 5 + Ved ikke | Ordinal (Likert) | Ét emne med tre udsagn (indeks = niveau 2) |
-| 11 | `købsintention` | SonicWaves nye model kommer på markedet næste år. Hvor sandsynligt er det, at du køber den inden for det første år? | Sandsynlighedsskala (1–5 + Ved ikke) | Ordinal | Alle (gruppe A) |
-| 12 | `betalingsvillighed` | Hvad vil du højst betale for en trådløs højttaler? (kr.) | Talsvar (kr.) | Ratio | Alle (gruppe A) |
-| 13 | `købskriterium` | Hvad er vigtigst for dig, når du køber en højttaler? | MC (ét svar) | Nominal | Lydkvalitet · Pris · Design · Batteritid · Mærke (gruppe B) |
-| 14 | `køn` | Hvad er dit køn? | MC (ét svar) | Nominal | Kvinde · Mand · Vil ikke oplyse |
+| 1 | `over_18` | Er du fyldt 18 år? | MC (ét svar) | Nominal | **Screening:** Nej → skemaet slutter |
+| 2 | `hørt_om` | Hvor hørte du første gang om SonicWave? | MC (ét svar) | Nominal | |
+| 3 | `lyttefrekvens` | Hvor mange gange har du lyttet til musik på en højttaler den seneste uge? | Frekvensskala (konkret) | Ordinal | |
+| 4 | `købt_webshop` | Har du købt noget i SonicWaves webshop inden for det seneste år? | MC (ét svar) | Nominal | **Filter:** kun «Ja» får 5–10 |
+| 5 | `kundetype` | Var det første gang, du købte i SonicWaves webshop? | MC (ét svar) | Nominal | Kun hvis «Ja» til 4 |
+| 6 | `minutter` | Hvor mange minutter brugte du i webshoppen ved dit seneste køb? | Talsvar (minutter) | Ratio | Kun hvis «Ja» til 4 |
+| 7 | `vurdering` | Hvordan vurderer du SonicWaves webshop alt i alt? (1–10) | Numerisk (1–10) | Interval* | Kun hvis «Ja» til 4 |
+| 8–10 | `q1`–`q3` | “Det var nemt at finde det, jeg søgte” · “Leveringen var hurtig” · “Webshoppen er forvirrende” (negativt formuleret) | Likert 5 + Ved ikke | Ordinal (Likert) | Kun hvis «Ja» til 4. Ét emne med tre udsagn (indeks = niveau 2) |
+| 11 | `forbrug_elektronik` | Hvor meget har du i alt brugt på elektronik det seneste år? (kr.) | Talsvar (kr.) | Ratio | |
+| 12 | `region` | I hvilken region bor du? | MC (ét svar) | Nominal | Demografi til sidst |
 
-\* Tilfredshed 1–10 er strengt taget ordinal, men behandles som interval. Det står på begge sider.
+\* Vurderingen 1–10 er strengt taget ordinal, men behandles som interval.
+
+Gennemgående eksempler på statistiksiden: Chi² *hørt om × lyttefrekvens*, t-test *vurdering for nye vs. faste kunder*, ANOVA *minutter × hørt om*.
 
 ---
 
-## Hvad der er rettet
+## Hvad der er rettet (oktober 2026)
 
 ### I Spørgeskemadesigneren
 | | Før | Nu |
@@ -72,10 +81,10 @@ Det samme gælder rensningen: Den rå eksport findes i en **basisudgave** med tr
 
 ## Sådan holdes siderne ens fremover
 
-1. Ændres SonicWave-skemaet, så ret **tre steder**:
-   - `sonicWaveExample()` i `spoergeskemadesigner.jsx`
-   - `CODEBOOK` i `statistiske_test.jsx`
-   - `CODEBOOK` i `data/generate_dataset.py`
-2. Den nemmeste kontrol: Indlæs eksemplet i designeren, gå til trin 6, og sammenlign kodebogen med § 01 på statistiksiden (eller download `kodebog.csv`).
-3. Kør `npm run data` i `tests` efter ændringer i generatoren. Scriptet skal stadig give χ² = 103,94, t = 2,677 og F = 10,17. Nye tilfældige valg skal bruge `rng2`.
+1. Ændres eksemplet, så ret **tre steder**:
+   - `webshopExample()` i `spoergeskemadesigner.jsx`
+   - `EXAMPLE_CODEBOOK` i `statistiske_test.jsx`
+   - kodebogen i `data/generate_example.py`
+2. Den nemmeste kontrol: Indlæs eksemplet i designeren, gå til trin 6, og sammenlign kodebogen med eksempelkodebogen på statistiksiden.
+3. Holdets SonicWave-skema rettes kun på statistiksiden (`CODEBOOK` i `statistiske_test.jsx` og i `data/generate_dataset.py`). Kør `npm run data` i `tests` bagefter.
 4. Begge sider bygges med `npm run build`.
