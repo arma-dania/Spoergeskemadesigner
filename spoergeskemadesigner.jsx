@@ -2304,8 +2304,8 @@ function FinalStep({ topic, constructs, scaleChoices, questions, onBack, onResta
       />
 
       <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <div className="p-8" style={{ backgroundColor: 'var(--paper-warm)' }}>
+        <div className="lg:col-span-2 min-w-0">
+          <div className="p-5 sm:p-8" style={{ backgroundColor: 'var(--paper-warm)' }}>
 
             {/* OPSUMMERING — TRIN 1-3 */}
             <div className="mb-10">
