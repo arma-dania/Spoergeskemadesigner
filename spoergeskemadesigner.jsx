@@ -211,7 +211,7 @@ const STATEMENT_SCALES = new Set(['likert5', 'likert7', 'vigtighed', 'sandsynlig
 
 // Skalaer, hvor den studerende selv skriver svarmuligheder, enhed eller endepunkter
 const CUSTOM_OPTION_HELP = {
-  mc_single: { label: 'Svarmuligheder (én pr. linje)', placeholder: 'Sort\nHvid\nSand' },
+  mc_single: { label: 'Svarmuligheder (én pr. linje)', placeholder: 'Sort\nHvid\nBeige' },
   mc_multi: { label: 'Svarmuligheder (én pr. linje)', placeholder: 'Instagram\nFacebook\nTikTok' },
   rang: { label: 'Elementer, der skal rangordnes (én pr. linje)', placeholder: 'Pris\nLyd\nDesign' },
   kategorier: { label: 'Kategorier (én pr. linje)', placeholder: '20-29 år\n30-39 år\n40-55 år' },
